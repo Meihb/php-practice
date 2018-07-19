@@ -5,6 +5,7 @@
  * Date: 2017-8-30
  * Time: 11:15
  */
+
 /*
  * 查看php的牧师方法,主要是__set,__get,__call,__callStatic,尝试动态绑定
  */
@@ -239,17 +240,27 @@ function frame($s)
     }
     return $ns;
 }
+
 //$txt = 'hello world';
 //var_dump(frame($txt));
 
-function quote(&$a){//应用传值的值无需预先创建
-    $a =4;
-    $a = $a+1;
+function quote(&$a)
+{//应用传值的值无需预先创建
+    $a = 4;
+    $a = $a + 1;
     return $a;
 }
+
 //$a = 5;
 //echo $a;
-quote($a);
-echo $a;
+//quote($a);
+//echo $a;
 
 
+function testsyanx()
+{
+    $name1 = 'mhb';
+    $situation = false;
+    $situation or exit($name1);
+}
+testsyanx();

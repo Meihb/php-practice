@@ -12,14 +12,14 @@
  */
 class MyLock
 {
-    const LOCK_TYPE_DB = 'SQLLock';
+    const LOCK_TYPE_DB = 'MysqlLock';
     const LOCK_TYPE_FILE = 'FileLock';
     const LOCK_TYPE_MEMCACHE = 'MemcacheLock';
     const LOCK_TYPE_REDIS = 'RedisLock';
 
 
     private $_lock = null;
-    private static $_supportLocks = array('FileLock', 'SQLLock', 'MemcacheLock','redisLock');
+    private static $_supportLocks = array('FileLock', 'MysqlLock', 'MemcacheLock', 'redisLock');
 
     public function __construct($type, $options = array())
     {
@@ -28,7 +28,7 @@ class MyLock
         }
     }
 
-    public function createLock($type, $options = array())
+    private function createLock($type, $options = array())
     {
         if (false == in_array($type, self::$_supportLocks)) {
             throw new Exception("not support lock of ${type}");
@@ -41,7 +41,7 @@ class MyLock
         if (false == $this->_lock instanceof ILock) {
             throw new Exception('false == $this->_lock instanceof ILock');
         }
-        $this->_lock->getLock($key, $timeout);
+        return $this->_lock->getLock($key, $timeout);
     }
 
     public function releaseLock($key)
@@ -49,7 +49,7 @@ class MyLock
         if (false == $this->_lock instanceof ILock) {
             throw new Exception('false == $this->_lock instanceof ILock');
         }
-        $this->_lock->releaseLock($key);
+        return $this->_lock->releaseLock($key);
     }
 }
 
@@ -107,6 +107,53 @@ class FileLock implements ILock
     }
 }
 
+class MysqlLock implements ILock
+{
+
+    private $_mysql;
+    private $_default = [
+        'host' => '127.0.0.1',
+        'port' => '3306',
+        'user' => 'dwts',
+        'pwd' => '12121992',
+        'database' => 'dwts',
+    ];
+
+    public function __construct(array $options = [])
+    {
+        $this->connect($options);
+    }
+
+    public function connect(array $options = [])
+    {
+        $DB = @mysqli_connect(
+            isset($options['host']) ?: $this->_default['host'],
+            isset($options['user']) ?: $this->_default['user'],
+            isset($options['pwd']) ?: $this->_default['pwd'],
+            isset($options['database']) ?: $this->_default['database'],
+            isset($options['port']) ?: $this->_default['port']
+        );
+        $DB->query("set names 'utf8';");
+        $this->_mysql = $DB;
+
+        return true;
+    }
+
+    public function getLock($key, $timeout = self::EXPIRE)
+    {
+
+        $res = $this->_mysql->query("SELECT GET_LOCK('{$key}',$timeout) as lock_flag")->fetch_array();
+//        var_dump($res);
+        return $res['lock_flag'];
+    }
+
+    public function releaseLock($key)
+    {
+        $res = $this->_mysql->query("SELECT RELEASE_LOCK('{$key}')");
+        return $res;
+    }
+}
+
 class RedisLockV1 implements ILock
 {
     private $redis;
@@ -122,6 +169,7 @@ class RedisLockV1 implements ILock
         } catch (Exception $e) {
             return false;
         }
+        return true;
 
     }
 
@@ -148,8 +196,8 @@ class RedisLockV1 implements ILock
 
     public function getLock($key, $timeout = self::EXPIRE)
     {
-        $key = $this->_keyPrefix . $key.'lock';
-        $this->redis->set($key,'locked',time()+$timeout);
+        $key = $this->_keyPrefix . $key . 'lock';
+        $this->redis->set($key, 'locked', time() + $timeout);
     }
 
     public function releaseLock($key)
@@ -157,4 +205,16 @@ class RedisLockV1 implements ILock
         // TODO: Implement releaseLock() method.
     }
 
+}
+
+class testMyNanme
+{
+    static function changeName()
+    {
+        $DB = new mysqli('127.0.0.1', 'dwts', '12121992', 'dwts', '3306');
+        $DB->query("set names 'utf8';");
+
+        $DB->query('UPDATE  ');
+
+    }
 }

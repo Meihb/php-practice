@@ -19,11 +19,13 @@ if(flock($fp, LOCK_SH)){ // 取得贡献锁
 */
 
 $fp = fopen($file, 'a');
-var_dump(flock($fp, LOCK_EX));
-if(flock($fp, LOCK_EX)){                    // 取得独占锁
+echo 'start at ' . date('Y-m-d H:i:s')."\r\n";
+if (flock($fp, LOCK_EX )) {                    // 取得独占锁
     fwrite($fp, "How Are You\r\n");         // 写入数据
     fwrite($fp, "Show Me The Money\r\n");   // 写入数据
     flock($fp, LOCK_UN);                    // 解锁
+} else {
+    echo 'ends at'.date("Y-m-d H:i:s")."\r\n";
 }
 
 
