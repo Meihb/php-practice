@@ -10,16 +10,39 @@
  * Class MyLock
  *
  */
-class MyLock
+/*
+ *     case "test_lk":
+        $mysql_lock = new LockUtils("MysqlLock", $conn);
+        $key = 1;
+        if (!$mysql_lock->getLock($key, 10)) die("blocked");
+
+        echo "get lock";
+        $mysql_lock->releaseLock($key);
+
+
+        break;
+
+    case"test_lk2":
+        $mysql_lock = new LockUtils("MysqlLock", $conn);
+        $key = 1;
+        if (!$mysql_lock->getLock($key, 3)) die("blocked");
+        sleep(2);
+        $mysql_lock->releaseLock($key);
+        echo "get lock";
+        break;
+ */
+
+class LockUtils
 {
     const LOCK_TYPE_DB = 'MysqlLock';
     const LOCK_TYPE_FILE = 'FileLock';
-    const LOCK_TYPE_MEMCACHE = 'MemcacheLock';
+//    const LOCK_TYPE_MEMCACHE = 'MemcacheLock';
     const LOCK_TYPE_REDIS = 'RedisLock';
 
 
     private $_lock = null;
-    private static $_supportLocks = array('FileLock', 'MysqlLock', 'MemcacheLock', 'redisLock');
+//    private static $_supportLocks = array('FileLock', 'MysqlLock', 'MemcacheLock', 'redisLock');
+    private static $_supportLocks = array('FileLock', 'MysqlLock', "RedisLock");
 
     public function __construct($type, $options = array())
     {
@@ -62,10 +85,15 @@ interface ILock
     public function releaseLock($key);
 }
 
+/**
+ * 文件实现锁
+ * Class FileLock
+ */
 class FileLock implements ILock
 {
     private $fp;
     private $_single;
+    private $_lockpath;
 
     public function __construct($options)
     {
@@ -77,15 +105,15 @@ class FileLock implements ILock
         $this->_single = isset($options['single']) ? $options['single'] : false;
     }
 
-    public function getLock($key, $timeout = self::lock_expire_time)
+    public function getLock($key, $timeout = self::EXPIRE)
     {
         $startTime = time();
         $file = md5(__FILE__ . $key);
         $this->fp = fopen($this->_lockpath . $file . ".lock", "w+");
         if ($this->_single) {
-            $op = LOCK_EX + LOCK_NB;
+            $op = LOCK_EX + LOCK_NB;//非阻塞
         } else {
-            $op = LOCK_EX;
+            $op = LOCK_EX;//独占 阻塞
         }
         /**
          * operation
@@ -94,10 +122,19 @@ class FileLock implements ILock
          * 3.LOCK_UN 释放锁定 （无论共享或独占） defined as 3
          * 4.LOCK_NB 在flock()锁定时不阻塞   defined as 4
          */
-        if (!flock($this->fp, $op, $a)) {
-            throw new Exception('failed');
+
+        do {
+            $canWrite = flock($this->fp, $op);
+            if (!$canWrite) {
+                usleep(round(rand(1000) * 1000));
+            }
+        } while (!$canWrite && (time() - $startTime) < $timeout);
+        if ($canWrite) {
+            return true;
+        } else {
+            fclose($this->fp);
+            return false;
         }
-        return true;
     }
 
     public function releaseLock($key)
@@ -107,69 +144,65 @@ class FileLock implements ILock
     }
 }
 
+/**
+ * mysql实现锁 阻塞锁
+ * Class MysqlLock
+ */
 class MysqlLock implements ILock
 {
 
-    private $_mysql;
-    private $_default = [
-        'host' => '127.0.0.1',
-        'port' => '3306',
-        'user' => 'dwts',
-        'pwd' => '12121992',
-        'database' => 'dwts',
-    ];
+    private $_conn;
 
-    public function __construct(array $options = [])
+    public function __construct($conn)
     {
-        $this->connect($options);
+        $this->_conn = $conn;
     }
 
-    public function connect(array $options = [])
-    {
-        $DB = @mysqli_connect(
-            isset($options['host']) ?: $this->_default['host'],
-            isset($options['user']) ?: $this->_default['user'],
-            isset($options['pwd']) ?: $this->_default['pwd'],
-            isset($options['database']) ?: $this->_default['database'],
-            isset($options['port']) ?: $this->_default['port']
-        );
-        $DB->query("set names 'utf8';");
-        $this->_mysql = $DB;
-
-        return true;
-    }
 
     public function getLock($key, $timeout = self::EXPIRE)
     {
 
-        $res = $this->_mysql->query("SELECT GET_LOCK('{$key}',$timeout) as lock_flag")->fetch_array();
-//        var_dump($res);
+//        $res = $this->_mysql->query("SELECT GET_LOCK('{$key}',$timeout) as lock_flag")->fetch_array();
+        $res = mysqli_query($this->_conn, "SELECT GET_LOCK('{$key}',$timeout) as lock_flag");
+        $res = mysqli_fetch_array($res, MYSQLI_ASSOC);
         return $res['lock_flag'];
     }
 
     public function releaseLock($key)
     {
-        $res = $this->_mysql->query("SELECT RELEASE_LOCK('{$key}')");
+//        $res = $this->_mysql->query("SELECT RELEASE_LOCK('{$key}')");
+        $res = mysqli_query($this->_conn, "SELECT RELEASE_LOCK('{$key}')");
         return $res;
     }
 }
 
-class RedisLockV1 implements ILock
+class RedisLock implements ILock
 {
     private $redis;
     private $_config;
     private $_keyPrefix;
+    private $_key_expire;
+    private $_block;
 
-    public function __construct($config, $keyPrefix = 'RedisLock')
+    /**
+     * RedisLockV1 constructor.
+     * @param $redis Redis
+     * @param $block
+     * @param int $key_expire
+     */
+    public function __construct($options)
     {
-        $this->_config = $config;
-        $this->_keyPrefix = $keyPrefix;
-        try {
-            $this->redis = $this->_connect();
-        } catch (Exception $e) {
-            return false;
-        }
-        return true;
+        $this->_block = isset($options["block"]) ? (bool)$options['block'] : true;
+        $this->redis = $options["redis"];
+        $this->_key_expire = isset($options["key_expire"]) && (int)$options['key_expire'] >= 0 ? (int)$options["key_expire"] : 10;
+//        $this->_config = $config;
+//        $this->_keyPrefix = $keyPrefix;
+//        try {
+//            $this->redis = $this->_connect();
+//        } catch (Exception $e) {
+//            return false;
+//        }
+//        return true;
 
     }
 
@@ -196,25 +229,27 @@ class RedisLockV1 implements ILock
 
     public function getLock($key, $timeout = self::EXPIRE)
     {
-        $key = $this->_keyPrefix . $key . 'lock';
-        $this->redis->set($key, 'locked', time() + $timeout);
+        $startTime = time();
+        do {
+            $canWrite = $this->redis->set($key, uniqid(), ['nx', 'ex' => $this->_key_expire]);
+            if (!$canWrite) {
+                usleep(round(rand(1000) * 1000));
+            }
+        } while (!$canWrite && (time() - $startTime) < $timeout);
+        if (!$canWrite) {
+            return false;
+        }
+        return true;
     }
 
     public function releaseLock($key)
     {
-        // TODO: Implement releaseLock() method.
+        return $this->redis->delete($key);
     }
 
 }
 
-class testMyNanme
-{
-    static function changeName()
-    {
-        $DB = new mysqli('127.0.0.1', 'dwts', '12121992', 'dwts', '3306');
-        $DB->query("set names 'utf8';");
 
-        $DB->query('UPDATE  ');
 
-    }
-}
+
+
