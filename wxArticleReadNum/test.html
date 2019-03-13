@@ -1,0 +1,52 @@
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<script language="javascript" >
+    window.onload=function(){
+        nextdoor();
+    };
+    function nextdoor(){
+        var taskid=GetQueryString("taskid");
+        $.ajax({
+            type: "GET",
+            url: "http://act1.dq.sdo.com/dataAnalyzeTest/getNextTask.php?taskid",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (message) {
+                    var url=message.href;
+                    var taskid=message.taskid;
+                    if(url!="")
+                    {
+                        setTimeout(function(){window.location=url;},3000);
+                    }else
+                    {
+                        alert("结束");
+                        // window.location=url+"&taskid="+taskid+"#rd";
+                    }
+
+
+
+            },
+            error: function (message) {
+                alert("提交数据失败");
+            }
+        });
+    }
+
+    function GetQueryString(name)
+    {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r!=null)return  unescape(r[2]); return null;
+    }
+</script>
+<div align="center">
+    <p>阅读刷新中转页面，页面正在跳转中...</p>
+    <p>如一直刷新本页面，则一直等待后台分配任务</p>
+</div>
+
+</body>
+</html>
