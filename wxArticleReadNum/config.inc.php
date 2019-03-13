@@ -5,14 +5,6 @@ session_start();
 
 
 
-/*$dbname = 'Mir_Act';
-$host = 'localhost';
-$port = 3306;
-$user = 'huangyong';
-$pwd = 'admin030248';
-$tablepre = 'ACTMir_friends_';
-
-$link = mysqli_connect("{$host}:{$port}",$user,$pwd,$dbname);*/
 
 
 
@@ -27,11 +19,11 @@ $CREATE_SQL = "CREATE TABLE IF NOT EXISTS `weixin_article_read_num` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ";
 
 $IP = CDNgetIp();
-$dbname = 'testDB';
-$host = '10.2.0.12';
-$user = 'test';
+$dbname = '';
+$host = '';
+$user = '';
 $port = '';
-$pwd = 'test123456';
+$pwd = '';
 
 
 $link = mysqli_connect("{$host}{$port}", $user, $pwd, $dbname);
