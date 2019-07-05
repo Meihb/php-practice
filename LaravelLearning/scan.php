@@ -7,7 +7,9 @@
  */
 
 //使用composer自动加载器
-require_once "../vendor/autoload.php";
+
+echo __DIR__;
+require_once __DIR__."/../vendor/autoload.php";
 
 //实例化Guzzle Http客户端
 $client = new GuzzleHttp\Client();
