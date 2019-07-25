@@ -214,16 +214,16 @@ class RedisLock implements ILock
     private function _connect()
     {
         try {
-            $redis = new Redis();
-            $redis->connect($this->_config['host'], $this->_config['port'], $this->_config['timeout'], $this->_config['reserved'], $this->_config['retry_interval']);
+            $this->redis = new Redis();
+            $this->redis->connect($this->_config['host'], $this->_config['port'], $this->_config['timeout'], $this->_config['reserved'], $this->_config['retry_interval']);
             if (empty($this->_config['auth'])) {
-                $redis->auth($this->_config['auth']);
+                $this->redis->auth($this->_config['auth']);
             }
-            $redis->select($this->_config['index']);
+            $this->redis->select($this->_config['index']);
         } catch (RedisException $e) {
             throw new Exception($e->getMessage());
         }
-        return $redis;
+        return $this->redis;
 
     }
 
