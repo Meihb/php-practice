@@ -120,5 +120,32 @@ var_dump($redis->get("name"));
 //var_dump($redis->rpop('mylist1'));
 
 //SET
+/*
 $redis->flushDB();
+$redis->sAdd('set1', 1, 2, 3, 4, 5, 6);
+$redis->sAdd('set2', 3, 4, 5, 6, 7, 8);
+$redis->sAdd('set3', 1, 6, 7, 8, 9, 0);
+var_dump($redis->sMembers('set1'));//查看全部集合
+var_dump($redis->sUnion('set1', 'set2', 'set3'));//并集
+var_dump($redis->sDiff('set1', 'set2', 'set3'));//差集
+var_dump($redis->sInter('set1', 'set2'));//交集
+*/
+
+//Sorted Set
+/*
+$redis->flushDB();
+var_dump($redis->zAdd('zset1', 3, 'n1', 2, 'n2', 4, 'n3'));
+var_dump($redis->zAdd('zset2', 3, 4, 5, 6, 7, 8));
+var_dump($redis->zAdd('zset3', 5, 6, 7, 8, 9, 0));
+var_dump($redis->zCard('zset1'));
+var_dump($redis->zCount('zset1', 1, 3));//左右皆为闭
+var_dump($redis->zRange('zset1', 0, 1));
+var_dump($redis->zRangeByScore('zset1', 4, 5));
+*/
+
+var_dump($redis->dbSize());
+//var_dump($redis->info());
+
+var_dump($redis->config('SET', 'notify-keyspace-events','AEK'));
+var_dump($redis->config('get', 'notify-keyspace-events'));
 
