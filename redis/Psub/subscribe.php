@@ -8,3 +8,5 @@
 $redis = new Redis();
 $redis->connect("118.25.41.135");
 $redis->ping() or die('无法连接至redis');
+
+var_dump($redis->publish('channel1', 'hello world'));
