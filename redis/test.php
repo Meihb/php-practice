@@ -27,8 +27,8 @@ echo 'redis_session:' . $redis->get('PHPREDIS_SESSION:' . session_id()) . '<br/>
 echo 'php_session:' . json_encode($_SESSION['class']);
 */
 //连接redis
-$redis = new Redis() or die("fail to make instance of Redis");
-$redis->connect("118.25.41.135", 6379) or die('fail to connect to redis,erro:' . $redis->getLastError());
+$redis = new RedisIns() or die("fail to make instance of Redis");
+$redis->connect("127.0.0.1", 6379) or die('fail to connect to redis,erro:' . $redis->getLastError());
 
 //var_dump($redis->ping());
 $redis->select(15);

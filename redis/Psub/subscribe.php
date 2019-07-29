@@ -6,7 +6,17 @@
  * Time: 11:46
  */
 $redis = new Redis();
-$redis->connect("118.25.41.135");
-$redis->ping() or die('无法连接至redis');
+$redis->connect("127.0.0.1");
+$redis->ping();
+//$redis->setOption(Redis::OPT_READ_TIMEOUT, -1);
 
-var_dump($redis->publish('channel1', 'hello world'));
+//var_dump($redis->config('get', 'notify-keyspace-events'));
+
+try {
+    $redis->subscribe(['chanel1'], function ($redis, $chan, $msg) {
+        echo "Channel: $chan\n";
+        echo "Payload: $msg\n";
+    });
+} catch (Exception $exception) {
+    echo 'exception:' . $exception->getMessage();
+}

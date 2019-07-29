@@ -186,7 +186,7 @@ class RedisLock implements ILock
 
     /**
      * RedisLockV1 constructor.
-     * @param $redis Redis
+     * @param $redis RedisIns
      * @param $block
      * @param int $key_expire
      */
@@ -208,13 +208,13 @@ class RedisLock implements ILock
 
 
     /**
-     * @return bool|Redis
+     * @return bool|RedisIns
      * @throws Exception
      */
     private function _connect()
     {
         try {
-            $this->redis = new Redis();
+            $this->redis = new RedisIns();
             $this->redis->connect($this->_config['host'], $this->_config['port'], $this->_config['timeout'], $this->_config['reserved'], $this->_config['retry_interval']);
             if (empty($this->_config['auth'])) {
                 $this->redis->auth($this->_config['auth']);

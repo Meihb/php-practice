@@ -2,7 +2,7 @@
 
 namespace malkusch\lock\mutex;
 
-use Redis;
+use RedisIns;
 use RedisException;
 use malkusch\lock\exception\LockAcquireException;
 use malkusch\lock\exception\LockReleaseException;
@@ -26,7 +26,7 @@ class PHPRedisMutex extends RedisMutex
      * The Redis APIs needs to be connected yet. I.e. Redis::connect() was
      * called already.
      *
-     * @param Redis[] $redisAPIs The Redis connections.
+     * @param RedisIns[] $redisAPIs The Redis connections.
      * @param string  $name      The lock name.
      * @param int     $timeout   The time in seconds a lock expires, default is 3.
      *
@@ -42,7 +42,7 @@ class PHPRedisMutex extends RedisMutex
      */
     protected function add($redis, $key, $value, $expire)
     {
-        /** @var Redis $redis */
+        /** @var RedisIns $redis */
         try {
             //  Will set the key, if it doesn't exist, with a ttl of $expire seconds
             return $redis->set($key, $value, ["nx", "ex" => $expire]);
@@ -61,7 +61,7 @@ class PHPRedisMutex extends RedisMutex
      */
     protected function evalScript($redis, $script, $numkeys, array $arguments)
     {
-        /** @var Redis $redis */
+        /** @var RedisIns $redis */
 
         /*
          * If a serializion mode such as "php" or "igbinary" is enabled, the arguments must be serialized but the keys
@@ -89,7 +89,7 @@ class PHPRedisMutex extends RedisMutex
      */
     protected function getRedisIdentifier($redis)
     {
-        /** @var Redis $redis */
+        /** @var RedisIns $redis */
         return sprintf("redis://%s:%d?database=%s", $redis->getHost(), $redis->getPort(), $redis->getDBNum());
     }
 }
