@@ -1,8 +1,0 @@
-{
-  "require": {
-    "ext-redis": "*",
-    "malkusch/lock": "^1.0",
-    "guzzlehttp/guzzle": "^6.3",
-    "league/csv": "^9.2"
-  }
-}

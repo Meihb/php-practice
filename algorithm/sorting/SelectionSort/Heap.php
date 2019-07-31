@@ -17,7 +17,20 @@ function HeapSort(array $H)
     //创建堆
     print_list($H, count($H), -1);
     HeapBuild($H);
+    $length = count($H);
+    //从最后一个元素进行调整
+    for ($i = count($H) - 1; $i > 0; $i--) {
+        echo "交换节点{$i}元素和堆顶" . "<br>";
 
+        //交换堆顶元素和堆最后一个元素
+        $temp = $H[$i];
+        $H[$i] = $H[0];
+        $H[0] = $temp;
+        $length--;
+        print_list($H, count($H), -1);
+        //调整堆
+        HeapAdjust($H, 0, count($H));
+    }
 }
 
 /**
@@ -33,27 +46,27 @@ function HeapBuild(array &$H)
     for ($i = $last_parent_has_child_key; $i >= 0; $i--) {
         HeapAdjust($H, $i, $length);
     }
+    //取出堆顶元素
 }
 
 /**
  * 已知堆H[s....m]除了H[s]外均满足堆的定义
- * @param array $a 待调整的堆,这里讨论的成为大顶堆,即从大到小排
+ * @param array $a 待调整的堆,这里讨论的成为小顶堆,即从小到大排
  * @param int $s 待调整的元素位置
  * @param int $len 数组长度
  */
 function HeapAdjust(array &$H, $s, $length)
 {
-    $tmp = $H[$s];
     $child = 2 * $s + 1;//左子偏移量,为啥不是2$s呢，因为从0开始计数的啊
 
     while ($child < $length) {//数组覆盖到左子范围
-
-        echo '当前处理' . $s . "节点:{$H[$s]}" . '为父节点的小堆', "<br>";
-        if ($child + 1 < $length && $H[$child] < $H[$child + 1]) {//存在右子,且左子小于右子;需找到比当前待调整节点的子节点位置
+        $tmp = $H[$s];
+        echo '当前处理' . $s . "节点:{$H[$s]}" . '为父节点的部分堆', "<br>";
+        if ($child + 1 < $length && $H[$child + 1] < $H[$child]) {//存在右子,且左子小于右子;需找到比当前待调整节点的子节点位置
             $child++;
         }
-        if ($H[$child] > $H[$s]) {//较大的子节点大于父节点
-            $H[$s] = $H[$child];//较大子节点和其父节点对换
+        if ($H[$child] < $H[$s]) {//较小的子节点小于父节点
+            $H[$s] = $H[$child];// 对换
             $H[$child] = $tmp;
             $s = $child;//当前层次堆处理完毕,设置被替换的子节点为新的堆顶位置
             $child = 2 * $s + 1;

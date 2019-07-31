@@ -41,7 +41,7 @@ class BinaryTreeImage
 
     /**
      * 构造函数，类属性初始化
-     * @param $tree 传递一个树的对象
+     * @param $tree mixed 传递一个树的对象
      * @return null
      */
     public function __construct($tree)
@@ -61,7 +61,7 @@ class BinaryTreeImage
     /**
      * 返回传进来的树对象对应的完全二叉树中最底层叶子结点数量
      * @param int $level  树的层数
-     * @return array 结点数量
+     * @return  float|int  结点数量
      */
     function GetMaxCount($level)
     {
