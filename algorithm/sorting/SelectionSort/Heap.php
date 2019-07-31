@@ -10,6 +10,8 @@ require "../common.php";
 /*
  * Ki<=K2i;Ki<K2i+1
  * 根据排序过得树进行排序,主要是创建堆,推出堆顶元素,以及重建堆
+ *
+ * 若要建成小顶堆,则每次调整取出的为最大值(因为每次取出堆顶pop到堆尾)
  */
 
 function HeapSort(array $H)
@@ -29,7 +31,7 @@ function HeapSort(array $H)
         $length--;
         print_list($H, count($H), -1);
         //调整堆
-        HeapAdjust($H, 0, count($H));
+        HeapAdjust($H, 0, $length);
     }
 }
 
@@ -51,7 +53,7 @@ function HeapBuild(array &$H)
 
 /**
  * 已知堆H[s....m]除了H[s]外均满足堆的定义
- * @param array $a 待调整的堆,这里讨论的成为小顶堆,即从小到大排
+ * @param array $a 待调整的堆,这里讨论的成为小顶堆,即从小到大排,那么每次向上选择的是大于父节点的较大子
  * @param int $s 待调整的元素位置
  * @param int $len 数组长度
  */
@@ -62,10 +64,10 @@ function HeapAdjust(array &$H, $s, $length)
     while ($child < $length) {//数组覆盖到左子范围
         $tmp = $H[$s];
         echo '当前处理' . $s . "节点:{$H[$s]}" . '为父节点的部分堆', "<br>";
-        if ($child + 1 < $length && $H[$child + 1] < $H[$child]) {//存在右子,且左子小于右子;需找到比当前待调整节点的子节点位置
+        if ($child + 1 < $length && $H[$child] < $H[$child + 1]) {//存在右子,且左子小于右子;则右子为较大值
             $child++;
         }
-        if ($H[$child] < $H[$s]) {//较小的子节点小于父节点
+        if ($H[$child] > $H[$s]) {//较小的子节点小于父节点
             $H[$s] = $H[$child];// 对换
             $H[$child] = $tmp;
             $s = $child;//当前层次堆处理完毕,设置被替换的子节点为新的堆顶位置
