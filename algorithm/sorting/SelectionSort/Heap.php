@@ -26,7 +26,7 @@ function HeapSort(array $H)
         $temp = $H[$i];
         $H[$i] = $H[0];
         $H[0] = $temp;
-        $length--;
+        $length--;//取出的最值和堆尾部元素互换之后,此尾部位置元素已经确定位置
         print_list($H, count($H), -1);
         //调整堆
         HeapAdjust($H, 0, count($H));
