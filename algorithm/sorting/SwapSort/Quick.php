@@ -6,6 +6,7 @@
  * Time: 16:37
  */
 
+require_once "../common.php";
 /*
  * 快速排序 如其名
  *
@@ -20,17 +21,57 @@
 
 function QuickSort(array &$arr, $low, $high)
 {
-    $pivotKey = $low;
-    while ($low != $high) {
-        
+    echo 'handling:' . "low as  {$low} high as  {$high},initiated as  " . implode(',', $arr) . "<br>";
+    $pivotVal = $arr[$low];//选取index内最小index的value作为
+    echo 'pivot is ' . $pivotVal . "<br>";
+    $initiate_low = $low;
+    $initiate_high = $high;
+    while ($low < $high) {
+        while ($high > $low) {//从尾部开始迁移,寻找较小值
+            echo '从尾部前移<br>';
+            if ($arr[$high] >= $pivotVal) {
+                echo 'low:' . $low . ',high:' . $high . ' nothing to do' . "<br>";
+                $high--;
+            } else {//got it
+                swap($arr, $low, $high);
+                echo 'low:' . $low . ',high:' . $high . ", sorted as " . implode(',', $arr) . "<br>";
+                break;
+            }
+
+        }
+        while ($low < $high) {//从首部后移,寻找较大值
+            echo '从首部后移<br>';
+            if ($arr[$low] <= $pivotVal) {
+                echo 'low:' . $low . ',high:' . $high . ' nothing to do' . "<br>";
+                $low++;
+            } else {//got it
+                swap($arr, $low, $high);
+                echo 'low:' . $low . ',high:' . $high . ", sorted as " . implode(',', $arr) . "<br>";
+                break;
+            }
+        }
+
+
+    }
+
+    if ($initiate_low < $low - 1) {//存在左边
+        QuickSort($arr, $initiate_low, $low - 1);
+    }
+    if ($initiate_high > $low + 1) {
+        QuickSort($arr, $low + 1, $initiate_high);
     }
 
 
 }
 
+
 function swap(&$arr, $a, $b)
 {
+    echo "交换 $a 和 $b 两个索引的值";
     $temp = $arr[$a];
     $arr[$a] = $arr[$b];
     $arr[$b] = $temp;
 }
+
+QuickSort($list_todo, 0, count($list_todo) - 1);
+echo " sorted as " . implode(',', $list_todo) . "<br>";
