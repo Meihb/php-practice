@@ -8,8 +8,8 @@
 
 
 //默认排序从小到大
-$list_todo = [49, 38, 65, 97, 76, 13, 27, 49, 55, 04];
-
+$list_todo = [49, 38, 65, 97, 76, 13, 27, 49, 55, 04,53];
+echo 'initial list:'.implode(',',$list_todo)."<br>";
 /**
  * @param array $list
  * @param $n

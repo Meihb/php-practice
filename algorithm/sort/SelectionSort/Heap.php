@@ -73,7 +73,7 @@ function HeapAdjust(array &$H, $s, $length)
             $s = $child;//当前层次堆处理完毕,设置被替换的子节点为新的堆顶位置
             $child = 2 * $s + 1;
             print_list($H, count($H), $child);
-        } else {//如果此堆顶部已经满足排序,那么就无需继续处理子节点的堆了,因为我们本身就从子往父节点处理的,
+        } else {//如果此堆顶部已经满足排序,那么就无需继续处理子节点的堆了,因为替换之前堆本身是稳定的
             print_list($H, count($H), $child);
             break;
         }

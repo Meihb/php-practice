@@ -5,7 +5,7 @@
  * Date: 2019/8/2
  * Time: 11:28
  */
-require_once "./common.php";
+require_once "../common.php";
 
 //merge函数将指定的两个有序数组(arr1,arr2)合并并且排序
 //我们可以找到第三个数组,然后依次从两个数组的开始取数据哪个数据小就先取哪个的,然后删除掉刚刚取过///的数据
