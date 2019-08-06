@@ -35,6 +35,14 @@ function binarySearch(array $arr, int $needle)
     return false;
 }
 
+/**
+ * 递归版本
+ * @param array $arr
+ * @param int $needle
+ * @param int $low
+ * @param int $high
+ * @return bool
+ */
 function binarySearchRecursion(array $arr, int $needle, int $low, int $high)
 {
     if ($high < $low) return false;
