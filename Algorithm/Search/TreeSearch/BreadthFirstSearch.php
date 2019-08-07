@@ -37,8 +37,8 @@ class Tree
      */
     public function BFS(TreeNode $node): \SplQueue
     {
-        $queue = new \SplQueue();
-        $visited = new \SplQueue();
+        $queue = new \SplQueue();//边缘列,即当前数据被访问到了,但还未向下访问
+        $visited = new \SplQueue();//结果列
 
         $queue->enqueue($node);
 
