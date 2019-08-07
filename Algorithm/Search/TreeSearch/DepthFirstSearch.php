@@ -31,11 +31,11 @@ $E->addChildren($G);
 $E->addChildren($H);
 $F->addChildren($M);
 
-$result = ($tree->BFS($tree->root));
+$result = ($tree->DFS($tree->root));
 
 //var_dump($result);
 foreach ($result as $key => $value) {
-    print_r($key);
 
     print_r($value);
+    echo "<br>";
 }
