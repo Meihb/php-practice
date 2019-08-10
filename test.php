@@ -263,4 +263,22 @@ function testsyanx()
     $situation = false;
     $situation or exit($name1);
 }
-testsyanx();
+
+//testsyanx();
+
+
+function testStack()
+{
+    $stack = new SplStack();
+    $stack->setIteratorMode(SplStack::IT_MODE_LIFO | SplStack::IT_MODE_DELETE);
+
+    $stack->push(1);
+    $stack->push(2);
+    var_dump($stack);
+
+    var_dump($stack->pop());
+
+    var_dump($stack);
+}
+
+testStack();

@@ -34,6 +34,7 @@ class BinaryTreeNode
 class BinaryTreee
 {
     public $root = null;
+    public $visited = [];
 
     public function __construct(BinaryTreeNode $binaryTreeNode)
     {
@@ -42,33 +43,122 @@ class BinaryTreee
 
 
     //先序遍历
-    public function Preorder_Traversal(BinaryTreeNode $binaryTreeNode)
+    public function Preorder_Traversal(BinaryTreeNode $binaryTreeNode, array &$visited = []): array
     {
-        echo $binaryTreeNode->data;
-        if (!empty($binaryTreeNode->lChild)) $this->Preorder_Traversal($binaryTreeNode->lChild);
-        if (!empty($binaryTreeNode->rChild)) $this->Preorder_Traversal($binaryTreeNode->rChild);
+        $visited[] = $binaryTreeNode->data;
+        if (!empty($binaryTreeNode->lChild)) $this->Preorder_Traversal($binaryTreeNode->lChild, $visited);
+        if (!empty($binaryTreeNode->rChild)) $this->Preorder_Traversal($binaryTreeNode->rChild, $visited);
+        return $visited;
+    }
+
+    /**
+     * 先序遍历 栈迭代实现
+     * 可见栈和双链表的区别就是IteratorMode改变了而已，栈的IteratorMode只能为：
+     * （1）SplDoublyLinkedList::IT_MODE_LIFO | SplDoublyLinkedList::IT_MODE_KEEP （默认值,迭代后数据保存）
+     * （2）SplDoublyLinkedList::IT_MODE_LIFO | SplDoublyLinkedList::IT_MODE_DELETE （迭代后数据删除）
+     * @param BinaryTreeNode $binaryTreeNode
+     * @param array $visited
+     * @return array
+     */
+    public function Preorder_Traversal_Iteration(BinaryTreeNode $binaryTreeNode): array
+    {
+        $stack = new \SplStack();
+        $stack->setIteratorMode(\SplDoublyLinkedList::IT_MODE_LIFO | \SplDoublyLinkedList::IT_MODE_DELETE);//设置
+        while ($binaryTreeNode || $stack->count() > 0) {//判断条件,要么有左子,要么栈不为空
+            while ($binaryTreeNode) {
+//                echo "visiting treenode {$binaryTreeNode->data}<br>";
+                $visited[] = $binaryTreeNode->data;//处理data
+                $stack->push($binaryTreeNode);//入栈
+
+//                echo "stack push in  {$binaryTreeNode->data},length={$stack->count()}<br>";
+                $binaryTreeNode = $binaryTreeNode->lChild;//访问左子
+            }
+            if ($stack->count() > 0) {//
+                //左子遍历结束，访问右子
+
+                $binaryTreeNode = $stack->pop();
+//                echo "stack pop out in  {$binaryTreeNode->data},length={$stack->count()}<br>";
+                $binaryTreeNode = $binaryTreeNode->rChild;
+            }
+
+        }
+        return $visited;
     }
 
     //中序遍历
-    public function Inorder_Traversal(BinaryTreeNode $binaryTreeNode)
+    public function Inorder_Traversal(BinaryTreeNode $binaryTreeNode, array & $visited = []): array
     {
-
-        if (!empty($binaryTreeNode->lChild)) $this->Inorder_Traversal($binaryTreeNode->lChild);
-        echo $binaryTreeNode->data;
-        if (!empty($binaryTreeNode->rChild)) $this->Inorder_Traversal($binaryTreeNode->rChild);
+        if (!empty($binaryTreeNode->lChild)) $this->Inorder_Traversal($binaryTreeNode->lChild, $visited);
+        $visited[] = $binaryTreeNode->data;
+        if (!empty($binaryTreeNode->rChild)) $this->Inorder_Traversal($binaryTreeNode->rChild, $visited);
+        return $visited;
 
     }
 
+    /**
+     * @param BinaryTreeNode $binaryTreeNode
+     * @return array
+     */
+    public function Inorder_Traversal_Iteration(BinaryTreeNode $binaryTreeNode): array
+    {
+        $stack = new \SplStack();
+        $stack->setIteratorMode(\SplDoublyLinkedList::IT_MODE_LIFO | \SplDoublyLinkedList::IT_MODE_DELETE);//设置
+        while ($binaryTreeNode || $stack->count() > 0) {//判断条件,要么有左子,要么栈不为空
+            while ($binaryTreeNode) {
+//                echo "visiting treenode {$binaryTreeNode->data}<br>";
+                $stack->push($binaryTreeNode);//入栈
+
+//                echo "stack push in  {$binaryTreeNode->data},length={$stack->count()}<br>";
+                $binaryTreeNode = $binaryTreeNode->lChild;//访问左子
+            }
+            if ($stack->count() > 0) {
+                $binaryTreeNode = $stack->pop();
+                //左子遍历结束，处理data,再访问右子
+                $visited[] = $binaryTreeNode->data;//处理data
+//                echo "stack pop out in  {$binaryTreeNode->data},length={$stack->count()}<br>";
+                $binaryTreeNode = $binaryTreeNode->rChild;
+            }
+
+        }
+        return $visited;
+    }
     //后序遍历
-    public function Postorder_Traversal(BinaryTreeNode $binaryTreeNode)
+    public function Postorder_Traversal(BinaryTreeNode $binaryTreeNode, array & $visited = []): array
     {
-        if (!empty($binaryTreeNode->lChild)) $this->Postorder_Traversal($binaryTreeNode->lChild);
-        if (!empty($binaryTreeNode->rChild)) $this->Postorder_Traversal($binaryTreeNode->rChild);
-        echo $binaryTreeNode->data;
+        if (!empty($binaryTreeNode->lChild)) $this->Postorder_Traversal($binaryTreeNode->lChild, $visited);
+        if (!empty($binaryTreeNode->rChild)) $this->Postorder_Traversal($binaryTreeNode->rChild, $visited);
+        $visited[] = $binaryTreeNode->data;
+        return $visited;
 
     }
 
+    /**
+     * @param BinaryTreeNode $binaryTreeNode
+     * @return array
+     */
+    public function Postorder_Traversal_Iteration(BinaryTreeNode $binaryTreeNode): array
+    {
+        $stack = new \SplStack();
+        $stack->setIteratorMode(\SplDoublyLinkedList::IT_MODE_LIFO | \SplDoublyLinkedList::IT_MODE_DELETE);//设置
+        while ($binaryTreeNode || $stack->count() > 0) {//判断条件,要么有左子,要么栈不为空
+            while ($binaryTreeNode) {
+//                echo "visiting treenode {$binaryTreeNode->data}<br>";
+                $stack->push($binaryTreeNode);//入栈
 
+//                echo "stack push in  {$binaryTreeNode->data},length={$stack->count()}<br>";
+                $binaryTreeNode = $binaryTreeNode->lChild;//访问左子
+            }
+            if ($stack->count() > 0) {
+                $binaryTreeNode = $stack->pop();
+                //左子遍历结束，处理data,再访问右子
+                $visited[] = $binaryTreeNode->data;//处理data
+//                echo "stack pop out in  {$binaryTreeNode->data},length={$stack->count()}<br>";
+                $binaryTreeNode = $binaryTreeNode->rChild;
+            }
+
+        }
+        return $visited;
+    }
 
 
 }
@@ -94,7 +184,14 @@ $E->addLeftChild($H);
 $E->addRightChild($G);
 $G->addLeftChild($M);
 
+echo "先序遍历 递归<br>";
+echo implode(',', $binaryTree->Preorder_Traversal($binaryTree->root)) . "<br>";
+echo "先序遍历 迭代<br>";
+echo implode(',', $binaryTree->Preorder_Traversal_Iteration($binaryTree->root)) . "<br>";
+echo "中序遍历 递归<br>";
+echo implode(',', $binaryTree->Inorder_Traversal($binaryTree->root)) . "<br>";
+echo "中序遍历 迭代<br>";
+echo implode(',', $binaryTree->Inorder_Traversal_Iteration($binaryTree->root)) . "<br>";
+echo "后序遍历 递归<br>";
+echo implode(',', $binaryTree->Postorder_Traversal($binaryTree->root)) . "<br>";
 
-$binaryTree->Preorder_Traversal($binaryTree->root);echo "<br>";
-$binaryTree->Inorder_Traversal($binaryTree->root);echo "<br>";
-$binaryTree->Postorder_Traversal($binaryTree->root);echo "<br>";
