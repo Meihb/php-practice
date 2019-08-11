@@ -122,6 +122,7 @@ class BinaryTreee
         }
         return $visited;
     }
+
     //后序遍历
     public function Postorder_Traversal(BinaryTreeNode $binaryTreeNode, array & $visited = []): array
     {
@@ -138,8 +139,11 @@ class BinaryTreee
      */
     public function Postorder_Traversal_Iteration(BinaryTreeNode $binaryTreeNode): array
     {
+        $visited = [];
         $stack = new \SplStack();
-        $stack->setIteratorMode(\SplDoublyLinkedList::IT_MODE_LIFO | \SplDoublyLinkedList::IT_MODE_DELETE);//设置
+        $stack_r = new \SplStack();
+        $stack->setIteratorMode(\SplDoublyLinkedList::IT_MODE_LIFO | \SplDoublyLinkedList::IT_MODE_DELETE);//设置iterator mode,即 后进先出、遍历即删除
+        $stack_r->setIteratorMode(\SplDoublyLinkedList::IT_MODE_LIFO | \SplDoublyLinkedList::IT_MODE_DELETE);//设置
         while ($binaryTreeNode || $stack->count() > 0) {//判断条件,要么有左子,要么栈不为空
             while ($binaryTreeNode) {
 //                echo "visiting treenode {$binaryTreeNode->data}<br>";
@@ -149,9 +153,11 @@ class BinaryTreee
                 $binaryTreeNode = $binaryTreeNode->lChild;//访问左子
             }
             if ($stack->count() > 0) {
+                $binaryTreeNode = $stack->top();
+                if (!$binaryTreeNode->rChild) {//不存在右子,同时也是入栈过得,即左子也遍历结束了,则处理data
+                    $visited[] = $binaryTreeNode->data;
+                }
                 $binaryTreeNode = $stack->pop();
-                //左子遍历结束，处理data,再访问右子
-                $visited[] = $binaryTreeNode->data;//处理data
 //                echo "stack pop out in  {$binaryTreeNode->data},length={$stack->count()}<br>";
                 $binaryTreeNode = $binaryTreeNode->rChild;
             }
@@ -194,4 +200,5 @@ echo "中序遍历 迭代<br>";
 echo implode(',', $binaryTree->Inorder_Traversal_Iteration($binaryTree->root)) . "<br>";
 echo "后序遍历 递归<br>";
 echo implode(',', $binaryTree->Postorder_Traversal($binaryTree->root)) . "<br>";
-
+echo "后序遍历 迭代<br>";
+echo implode(',', $binaryTree->Postorder_Traversal_Iteration($binaryTree->root)) . "<br>";
