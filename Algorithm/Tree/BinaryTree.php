@@ -14,6 +14,7 @@ class BinaryTreeNode
     public $data = null;
     public $lChild = null;
     public $rChild = null;
+    public $isFirst = null;
 
     public function __construct(String $data)
     {
@@ -31,7 +32,7 @@ class BinaryTreeNode
     }
 }
 
-class BinaryTreee
+class BinaryTree
 {
     public $root = null;
     public $visited = [];
@@ -69,15 +70,11 @@ class BinaryTreee
 //                echo "visiting treenode {$binaryTreeNode->data}<br>";
                 $visited[] = $binaryTreeNode->data;//处理data
                 $stack->push($binaryTreeNode);//入栈
-
-//                echo "stack push in  {$binaryTreeNode->data},length={$stack->count()}<br>";
                 $binaryTreeNode = $binaryTreeNode->lChild;//访问左子
             }
             if ($stack->count() > 0) {//
                 //左子遍历结束，访问右子
-
                 $binaryTreeNode = $stack->pop();
-//                echo "stack pop out in  {$binaryTreeNode->data},length={$stack->count()}<br>";
                 $binaryTreeNode = $binaryTreeNode->rChild;
             }
 
@@ -137,68 +134,170 @@ class BinaryTreee
      * @param BinaryTreeNode $binaryTreeNode
      * @return array
      */
-    public function Postorder_Traversal_Iteration(BinaryTreeNode $binaryTreeNode): array
+    public function Postorder_Traversal_Iteration_v1(BinaryTreeNode $binaryTreeNode): array
     {
         $visited = [];
         $stack = new \SplStack();
-        $stack_r = new \SplStack();
         $stack->setIteratorMode(\SplDoublyLinkedList::IT_MODE_LIFO | \SplDoublyLinkedList::IT_MODE_DELETE);//设置iterator mode,即 后进先出、遍历即删除
-        $stack_r->setIteratorMode(\SplDoublyLinkedList::IT_MODE_LIFO | \SplDoublyLinkedList::IT_MODE_DELETE);//设置
         while ($binaryTreeNode || $stack->count() > 0) {//判断条件,要么有左子,要么栈不为空
             while ($binaryTreeNode) {
-//                echo "visiting treenode {$binaryTreeNode->data}<br>";
+                $binaryTreeNode->isFirst = true;
                 $stack->push($binaryTreeNode);//入栈
-
-//                echo "stack push in  {$binaryTreeNode->data},length={$stack->count()}<br>";
                 $binaryTreeNode = $binaryTreeNode->lChild;//访问左子
             }
             if ($stack->count() > 0) {
-                $binaryTreeNode = $stack->top();
-                if (!$binaryTreeNode->rChild) {//不存在右子,同时也是入栈过得,即左子也遍历结束了,则处理data
-                    $visited[] = $binaryTreeNode->data;
-                }
                 $binaryTreeNode = $stack->pop();
-//                echo "stack pop out in  {$binaryTreeNode->data},length={$stack->count()}<br>";
-                $binaryTreeNode = $binaryTreeNode->rChild;
+                if ($binaryTreeNode->isFirst == true) {//第一次出现在栈顶,此时其左子已经遍历结束,需要遍历右子,由于是后序遍历,还不能pop出栈
+                    $binaryTreeNode->isFirst = false;
+                    $stack->push($binaryTreeNode);//重新入栈
+                    $binaryTreeNode = $binaryTreeNode->rChild;
+                } else {//第二次出现在栈顶
+                    $visited[] = $binaryTreeNode->data;
+                    $binaryTreeNode = null;//手动置空,令此节点退出循环
+                }
             }
 
         }
         return $visited;
     }
 
+    /**
+     * @param BinaryTreeNode $binaryTreeNode
+     * @return array
+     */
+    public function Levelorder_Traversal(BinaryTreeNode $binaryTreeNode): array
+    {
+        $visited = [];
+        $queue = new \SplQueue();
+        $queue->setIteratorMode(\SplQueue::IT_MODE_FIFO | \SplQueue::IT_MODE_DELETE);
+        if (!$binaryTreeNode) return $visited;
+        $queue->push($binaryTreeNode);//插入根节点
+        while ($queue->count() > 0) {
+            $btn = $queue->dequeue();//抛出一个节点
+//            echo "visiting treenode {$binaryTreeNode->data}<br>";
+            $visited[] = $btn->data;//访问数据
+            if ($btn->lChild) $queue->enqueue($btn->lChild);
+            if ($btn->rChild) $queue->enqueue($btn->rChild);
+        }
+        return $visited;
+    }
 
+    /**
+     * @param String $element
+     * @param BinaryTreeNode $binaryTreeNode
+     */
+    public function Insert(String $element, BinaryTreeNode &$binaryTreeNode)
+    {
+        if ($element > $binaryTreeNode->data) {//较根值大,则转右子树
+            if ($binaryTreeNode->rChild) {//存在右子树,递归
+                $this->Insert($element, $binaryTreeNode->rChild);
+            } else {//不存在右子,设为右子
+                $binaryTreeNode->rChild = new BinaryTreeNode($element);
+            }
+        } elseif ($element < $binaryTreeNode->data) {
+            if ($binaryTreeNode->lChild) {
+                $this->Insert($element, $binaryTreeNode->lChild);
+            } else {
+                $binaryTreeNode->lChild = new BinaryTreeNode($element);
+            }
+        } else {
+            return;
+        }
+
+        return;
+    }
+
+
+    /**
+     * 删除分三种情况
+     * 删除叶节点,最简单,置为Null
+     * 删除有一个子树的父节点,相对简单,把子节点提上来就是
+     * 删除一个度为2的节点,比较复杂,尝试变成 删除一个子树的情形,即 找到被删节点的 左子树的最大值 或者 右子树的最小值
+     *    此两种情况下,由于找到的左子树最大值或右子树最小值必然不多于一个子(左子树最大值必然在最右边,不能存在右子,同理,右子树最小值必然在最左边,不能存在左子)
+     *    那么用此节点代替被删节点,在处理此节点原本位置被删除的情况,就变成第二种类型的问题
+     * @param String $element
+     * @param  $binaryTreeNode
+     */
+    public function DeleteLeftWing(String $element, &$binaryTreeNode)
+    {
+        if (!$binaryTreeNode) die('未查询到相关元素');
+
+        if ($element > $binaryTreeNode->data) {
+             $this->DeleteLeftWing($element, $binaryTreeNode->rChild);
+        } elseif ($element < $binaryTreeNode->data) {
+              $this->DeleteLeftWing($element, $binaryTreeNode->lChild);
+        } else {//got it
+            if ($binaryTreeNode->rChild && $binaryTreeNode->lChild) {//度2
+                //在左子树查找最大值
+                $maxElement = $this->findMax($binaryTreeNode->lChild);
+                //用此最大值替换被删除节点
+                $binaryTreeNode->data = $maxElement;
+                //在左子树删除此最大值
+                $this->DeleteLeftWing($maxElement, $binaryTreeNode->lChild);
+
+            } elseif ($binaryTreeNode->lChild || $binaryTreeNode->rChild) {//度1
+                $binaryTreeNode->lChild ? $binaryTreeNode = $binaryTreeNode->lChild : $binaryTreeNode = $binaryTreeNode->rChild;
+            } else {//度0,叶子节点
+                $binaryTreeNode->data = null;
+            }
+
+        }
+    }
+
+    public function DeleteRightWing(String $element, &$binaryTreeNode)
+    {
+        if (!$binaryTreeNode) die('未查询到相关元素');
+
+        if ($element > $binaryTreeNode->data) {
+            $this->DeleteRightWing($element, $binaryTreeNode->rChild);
+        } elseif ($element < $binaryTreeNode->data) {
+            $this->DeleteRightWing($element, $binaryTreeNode->lChild);
+        } else {//got it
+            if ($binaryTreeNode->rChild && $binaryTreeNode->lChild) {//度2
+                //在右子树查找最小值
+                $minElement = $this->findMin($binaryTreeNode->rChild);
+                //用此最小值替换被删除节点
+                $binaryTreeNode->data = $minElement;
+                //在右子树删除此最小值
+                $this->DeleteRightWing($minElement, $binaryTreeNode->rChild);
+
+            } elseif ($binaryTreeNode->lChild || $binaryTreeNode->rChild) {//度1
+                $binaryTreeNode->lChild ? $binaryTreeNode = $binaryTreeNode->lChild : $binaryTreeNode = $binaryTreeNode->rChild;
+            } else {//度0,叶子节点
+                $binaryTreeNode->data = null;
+            }
+        }
+    }
+
+    /**
+     * @param BinaryTreeNode $binaryTreeNode
+     * @return String
+     */
+    public function findMin(BinaryTreeNode $binaryTreeNode): String
+    {
+        $tmp = $binaryTreeNode->data;
+        while ($binaryTreeNode->lChild) {
+            $binaryTreeNode = $binaryTreeNode->lChild;
+            $tmp = $binaryTreeNode->data;
+        }
+        return $tmp;
+    }
+
+    /**
+     * @param BinaryTreeNode $binaryTreeNode
+     * @return String
+     */
+    public function findMax(BinaryTreeNode $binaryTreeNode): String
+    {
+        $tmp = $binaryTreeNode->data;
+        while ($binaryTreeNode->rChild) {
+            $binaryTreeNode = $binaryTreeNode->rChild;
+            $tmp = $binaryTreeNode->data;
+        }
+        return $tmp;
+    }
 }
 
-//测试
-$A = new BinaryTreeNode("A");
-$B = new BinaryTreeNode("B");
-$C = new BinaryTreeNode("C");
-$D = new BinaryTreeNode("D");
-$E = new BinaryTreeNode("E");
-$F = new BinaryTreeNode("F");
-$G = new BinaryTreeNode("G");
-$H = new BinaryTreeNode("H");
-$M = new BinaryTreeNode("M");
 
-$binaryTree = new BinaryTreee($F);
-$F->addLeftChild($C);
-$F->addRightChild($E);
-$C->addLeftChild($A);
-$C->addRightChild($D);
-$D->addLeftChild($B);
-$E->addLeftChild($H);
-$E->addRightChild($G);
-$G->addLeftChild($M);
 
-echo "先序遍历 递归<br>";
-echo implode(',', $binaryTree->Preorder_Traversal($binaryTree->root)) . "<br>";
-echo "先序遍历 迭代<br>";
-echo implode(',', $binaryTree->Preorder_Traversal_Iteration($binaryTree->root)) . "<br>";
-echo "中序遍历 递归<br>";
-echo implode(',', $binaryTree->Inorder_Traversal($binaryTree->root)) . "<br>";
-echo "中序遍历 迭代<br>";
-echo implode(',', $binaryTree->Inorder_Traversal_Iteration($binaryTree->root)) . "<br>";
-echo "后序遍历 递归<br>";
-echo implode(',', $binaryTree->Postorder_Traversal($binaryTree->root)) . "<br>";
-echo "后序遍历 迭代<br>";
-echo implode(',', $binaryTree->Postorder_Traversal_Iteration($binaryTree->root)) . "<br>";
+

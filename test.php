@@ -281,4 +281,19 @@ function testStack()
     var_dump($stack);
 }
 
-testStack();
+//testStack();
+function testQueue()
+{
+    $queue = new SplQueue();
+    $queue->setIteratorMode(SplStack::IT_MODE_FIFO | SplStack::IT_MODE_DELETE);
+
+    $queue->enqueue(1);
+    $queue->enqueue(2);
+    var_dump($queue);
+
+    var_dump($queue->dequeue());
+
+    var_dump($queue);
+}
+
+testQueue();
