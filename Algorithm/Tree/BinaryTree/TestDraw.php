@@ -6,7 +6,6 @@
  * Time: 10:21
  */
 
-require_once "../common.php";
 error_reporting(E_ALL);
 
 //关闭错误显示
@@ -33,7 +32,6 @@ class Client
 
             spl_autoload_register('autoload');
 
-            $arr = array(62, 88, 58, 47, 35, 73, 51, 99, 37, 93);
 
 //            $tree = new Bst();   //搜索二叉树
             $tree = new Avl();    //平衡二叉树
@@ -51,4 +49,7 @@ class Client
     }
 }
 
+//$list_todo = array(62, 88, 58, 47, 35, 73, 51, 99, 37, 93);
+//Client::Main($list_todo );
+$list_todo = [3, 88, 58, 47, 2, 73, 51, 99, 37, 93];
 Client::Main($list_todo);

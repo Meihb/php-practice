@@ -143,7 +143,7 @@ class Avl
             case self::RH:    //新节点插入在root的左孩子的右子树上，要做双旋处理
                 $L_r = $L->right;   //root左孩子的右子树根
                 $L_r_bf = $L_r->bf;
-                //修改root及其左孩子的平衡因子
+                //修改root及其左孩子的平衡因 子
                 switch ($L_r_bf) {
                     case self::LH:
                         $root->bf = self::RH;
@@ -297,7 +297,7 @@ class Avl
      * @param $root 根节点 $key 待插入树的数字
      * @return null
      */
-    private function insert_node(&$root, $key)
+    private function  insert_node(&$root, $key)
     {
         //找到了插入的位置，插入新节点
         if (is_null($root)) {
