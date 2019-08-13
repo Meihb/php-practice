@@ -162,6 +162,65 @@ class AVL
         return $node;
     }
 
+    public function Delete($node, $element): TreeNode
+    {
+        if (!$node) {
+            return null;
+        }
+        if ($element > $node->data) {
+            $node->right = $this->Delete($node->right, $element);
+            if ($this->height($node->left) - $this->height($node->right) == 2) {//节点减少在右子,右子高度减少,相当于左子insert 高度增加，因此破坏平衡的节点肯定在左子树上
+                $pnode = $node->left;//获取左子树
+                if ($this->height($pnode->left) > $this->height($pnode->right)) {//对左子树的左右字数高度比较,查看哪一个子树的高度较大,则破坏节点在哪里
+                    //破坏节点在左子树的左子树上,则ll旋转
+                    $node = $this->leftleftRotation($node);
+                } else {
+                    //破坏节点在左子的右子上,lr旋转
+                    $node = $this->leftrightRotation($node);
+                }
+            }
+
+        } elseif ($element < $node->data) {
+            $node->left = $this->Delete($node->left, $element);
+            if ($this->height($node->right) - $this->height($node->left) == 2) {
+                $pnode = $node->right;//获取右子树
+                if ($this->height($pnode->left) > $this->height($pnode->right)) {//对右子树的左右字数高度比较,查看哪一个子树的高度较大,则破坏节点在哪里
+                    //破坏节点在右子树的左子树上,则rl旋转
+                    $node = $this->rightleftRotation($node);
+                } else {
+                    //破坏节点在右子的右子上,lr旋转
+                    $node = $this->rightrightRotation($node);
+                }
+            }
+        } else {
+            //此节点即为 需删除节点
+            //与bst一样,主要看此节点是叶节点、单子节点、双子节点
+            //区别是,双子节点是,不在任意左子树最大或右子数最小,而是取高度低的
+            if ($node->left && $node->right) {
+                if ($this->height($node->left) >= $this->height($node->right)) {//找左子树的最大值
+                    $pnode = $node->left;
+                    while ($pnode->right) {
+                        $pnode = $pnode->right;
+                    }
+                    $node->data = $pnode->data;
+                    $node->left = $this->Delete($node->left, $pnode->data);
+                } else {//删除右子数的最小值
+                    $pnode = $node->right;
+                    while ($pnode->left) {
+                        $pnode = $pnode->left;
+                    }
+                    $node->data = $pnode->data;
+                    $node->right = $this->Delete($node->right, $pnode->data);
+                }
+            } else {
+                $node = $node->left ? $node->left : $node->right;
+            }
+
+        }
+        $node->height = $this->max($this->height($node->left), $this->height($node->right)) + 1;
+        return $node;
+    }
+
     public function preOrder($treeNode, &$visited = [])
     {
         if ($treeNode) {
@@ -184,11 +243,13 @@ class AVL
         }
         return $visited;
     }
+
+
 }
 
 $arr = [3, 88, 58, 47, 2, 37, 51, 99, 73, 93];
 $avl = new AVL(3);
-$avl->isDebug = true;
+$avl->isDebug = false;
 /*
 $avl->root = $avl->Insert($avl->root, 88);
 echo '先序:' . implode(',', $avl->preOrder($avl->root)) . "<br>\r\n";
@@ -209,5 +270,6 @@ for ($i = 1; $i < count($arr); $i++) {
     echo '中序:' . implode(',', $avl->inOrder($avl->root)) . "<br>\r\n";
 }
 
+$avl->isDebug = true;
 
 
