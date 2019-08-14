@@ -162,62 +162,88 @@ class AVL
         return $node;
     }
 
-    public function Delete($node, $element): TreeNode
+    /**
+     * @param $node
+     * @param $element
+     */
+    public function Delete($node, $element)
     {
+        $this->debug("delete {$element} from " . print_r($node, true) . "<br>\r\n");
         if (!$node) {
+            $this->debug('return null:' . '<br>\r\n');
             return null;
         }
         if ($element > $node->data) {
+            $this->debug("handle:{$element} turning right when visiting node： {$node->data}" . "<br>\r\n");
             $node->right = $this->Delete($node->right, $element);
             if ($this->height($node->left) - $this->height($node->right) == 2) {//节点减少在右子,右子高度减少,相当于左子insert 高度增加，因此破坏平衡的节点肯定在左子树上
                 $pnode = $node->left;//获取左子树
                 if ($this->height($pnode->left) > $this->height($pnode->right)) {//对左子树的左右字数高度比较,查看哪一个子树的高度较大,则破坏节点在哪里
                     //破坏节点在左子树的左子树上,则ll旋转
+                    $this->debug(" need ll rotation" . '<br>\r\n');
                     $node = $this->leftleftRotation($node);
                 } else {
                     //破坏节点在左子的右子上,lr旋转
+                    $this->debug(" need lr rotation" . '<br>\r\n');
                     $node = $this->leftrightRotation($node);
                 }
+            } else {
+                $this->debug(" need none rotation" . '<br>\r\n');
             }
 
         } elseif ($element < $node->data) {
+            $this->debug("handle:{$element}  turning left when visiting node： {$node->data}" . "<br>\r\n");
             $node->left = $this->Delete($node->left, $element);
             if ($this->height($node->right) - $this->height($node->left) == 2) {
                 $pnode = $node->right;//获取右子树
                 if ($this->height($pnode->left) > $this->height($pnode->right)) {//对右子树的左右字数高度比较,查看哪一个子树的高度较大,则破坏节点在哪里
                     //破坏节点在右子树的左子树上,则rl旋转
+                    $this->debug(" need rl rotation" . '<br>\r\n');
                     $node = $this->rightleftRotation($node);
                 } else {
                     //破坏节点在右子的右子上,lr旋转
+                    $this->debug(" need rr rotation" . '<br>\r\n');
                     $node = $this->rightrightRotation($node);
                 }
+            } else {
+                $this->debug(" need none rotation" . '<br>\r\n');
             }
         } else {
             //此节点即为 需删除节点
             //与bst一样,主要看此节点是叶节点、单子节点、双子节点
             //区别是,双子节点是,不在任意左子树最大或右子数最小,而是取高度低的
+            $this->debug("handle:{$element}  got it when visit node： " . print_r($node, true) .  "<br>\r\n");
             if ($node->left && $node->right) {
+                $this->debug("\r\r node has both children " . '<br>\r\n');
                 if ($this->height($node->left) >= $this->height($node->right)) {//找左子树的最大值
+                    $this->debug("\r\r node has higher left child " . '<br>\r\n');
                     $pnode = $node->left;
                     while ($pnode->right) {
                         $pnode = $pnode->right;
                     }
+                    $this->debug("\r\r left child tree find maximum node " . print_r($pnode, true) .  "<br>\r\n");
                     $node->data = $pnode->data;
                     $node->left = $this->Delete($node->left, $pnode->data);
                 } else {//删除右子数的最小值
+                    $this->debug("\r\r node has higher right  child " . '<br>\r\n');
                     $pnode = $node->right;
                     while ($pnode->left) {
                         $pnode = $pnode->left;
                     }
+                    $this->debug("\r\r right child tree find minium node " . print_r($pnode, true) .  "<br>\r\n");
                     $node->data = $pnode->data;
                     $node->right = $this->Delete($node->right, $pnode->data);
                 }
             } else {
                 $node = $node->left ? $node->left : $node->right;
+                //此时为递归最深处(存在值的情况下),处理深度
             }
 
         }
-        $node->height = $this->max($this->height($node->left), $this->height($node->right)) + 1;
+        if (!is_null($node)) {//返回的node非null
+            $node->height = $this->max($this->height($node->left), $this->height($node->right)) + 1;
+        }
+        $this->debug("handle:{$element} return  node： " . print_r($node, true) .  "<br>\r\n");
         return $node;
     }
 
@@ -247,7 +273,7 @@ class AVL
 
 }
 
-$arr = [3, 88, 58, 47, 2, 37, 51, 99, 73, 93];
+$arr = [3, 88, 58, 47, 2, 37, 51, 99, 73, 93,1,50];
 $avl = new AVL(3);
 $avl->isDebug = false;
 /*
@@ -271,5 +297,18 @@ for ($i = 1; $i < count($arr); $i++) {
 }
 
 $avl->isDebug = true;
+
+$avl->root = $avl->Delete($avl->root, 47);
+echo '先序:' . implode(',', $avl->preOrder($avl->root)) . "<br>\r\n";
+echo '中序:' . implode(',', $avl->inOrder($avl->root)) . "<br>\r\n";
+
+//$avl->root = $avl->Delete($avl->root, 2);
+//echo '先序:' . implode(',', $avl->preOrder($avl->root)) . "<br>\r\n";
+//echo '中序:' . implode(',', $avl->inOrder($avl->root)) . "<br>\r\n";
+//for ($i = count($arr) - 1; $i > 0; $i--) {
+//    $avl->root = $avl->Delete($avl->root, $arr[$i]);
+//    echo '先序:' . implode(',', $avl->preOrder($avl->root)) . "<br>\r\n";
+//    echo '中序:' . implode(',', $avl->inOrder($avl->root)) . "<br>\r\n";
+//}
 
 
