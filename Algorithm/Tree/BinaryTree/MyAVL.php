@@ -296,7 +296,7 @@ for ($i = 1; $i < count($arr); $i++) {
     echo '中序:' . implode(',', $avl->inOrder($avl->root)) . "<br>\r\n";
 }
 
-$avl->isDebug = true;
+$avl->isDebug = false;
 
 $avl->root = $avl->Delete($avl->root, 47);
 echo '先序:' . implode(',', $avl->preOrder($avl->root)) . "<br>\r\n";

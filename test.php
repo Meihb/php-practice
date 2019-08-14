@@ -296,4 +296,66 @@ function testQueue()
     var_dump($queue);
 }
 
-testQueue();
+//testQueue();
+
+//开启错误日志功能
+ini_set('log_errors', 'on');
+error_reporting(E_ALL);
+
+
+class a
+{
+    public $data;
+    public $son;
+
+    public function __construct($data)
+    {
+        $this->data = $data;
+        $this->son = null;
+    }
+}
+
+$a1 = new a(1);
+$a2 = new a(2);
+$a3 = new a(3);
+$a4 = new a(4);
+
+
+$a1->son = $a2;
+$a2->son = $a3;
+$a3->son = $a4;
+function testa(a $a, $data)
+{
+    $a->data = $data;
+}
+
+function testb(a $a, a $a2)
+{
+    $a = $a2;
+}
+
+function testb2(a &$a, a $a2)
+{
+    $a = $a2;
+}
+
+testa($a3, 33);
+var_dump($a2);
+
+
+$current = $a1;
+$parent = null;
+
+
+while (!is_null($current)) {
+    $parent = $current;
+    $current = $current->son;
+
+}
+
+$current = new a(4);
+$parent->son = $current;
+
+echo 'result:';
+var_dump($a1);//对象的赋值是传址赋值
+
