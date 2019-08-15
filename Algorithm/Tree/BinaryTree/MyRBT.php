@@ -257,6 +257,8 @@ class MyRBT
                             $this->rightrightRotation($parent);
                         }
                         //交换父祖颜色,执行ll旋转
+//                        $this->swapColor($parent, $grandparent);//为何屏蔽呢？因为parent当前可能已经不是祖父节点的子节点了(如果走上面一轮的if语句的话)
+                        $parent = $grandparent->left;
                         $this->swapColor($parent, $grandparent);
                         $this->debug("ll rotation <br>\r\n");
                         $this->leftleftRotation($grandparent);
@@ -282,7 +284,9 @@ class MyRBT
                             $this->leftleftRotation($parent);
                         }
                         //交换颜色,执行rr旋转
-                        $this->swapColor($grandparent, $parent);
+//                        $this->swapColor($grandparent, $parent);//为何屏蔽呢？因为parent当前可能已经不是祖父节点的子节点了(如果走上面一轮的if语句的话)
+                        $parent = $grandparent->right;
+                        $this->swapColor($parent, $grandparent);
                         $this->debug("rr rotation <br>\r\n");
                         $this->rightrightRotation($grandparent);
 
