@@ -341,21 +341,23 @@ function testb2(a &$a, a $a2)
 
 testa($a3, 33);
 var_dump($a2);
+$a22 = $a2;
+$a22->data = 222;
+var_dump($a2);
 
-
-$current = $a1;
-$parent = null;
-
-
-while (!is_null($current)) {
-    $parent = $current;
-    $current = $current->son;
-
-}
-
-$current = new a(4);
-$parent->son = $current;
-
-echo 'result:';
-var_dump($a1);//对象的赋值是传址赋值
+//$current = $a1;
+//$parent = null;
+//
+//
+//while (!is_null($current)) {
+//    $parent = $current;
+//    $current = $current->son;
+//
+//}
+//
+//$current = new a(4);
+//$parent->son = $current;
+//
+//echo 'result:';
+//var_dump($a1);//对象的赋值是传址赋值
 

@@ -96,7 +96,7 @@ class BinaryTreeImage
      * @param $root，根节点（树或子树） $i，该根节点所处的层 $p_x，父节点的x坐标 $p_y,父节点的y坐标
      * @return null
      */
-    private function draw($root, $i, $p_x, $p_y)
+    public function draw($root, $i, $p_x, $p_y)
     {
         if ($i <= $this->level) {
             //当前节点的y坐标
@@ -140,7 +140,7 @@ class BinaryTreeImage
      * @param $x，当前节点的x坐标 $y，当前节点的y坐标 $node，当前节点的引用
      * @return null
      */
-    private function drawBstNode($x, $y, $node)
+    public function drawBstNode($x, $y, $node)
     {
         //节点圆的线颜色
         $black = imagecolorallocate($this->image, 0, 0, 0);
@@ -158,7 +158,7 @@ class BinaryTreeImage
      * @param $x，当前节点的x坐标 $y，当前节点的y坐标 $node，当前节点的引用
      * @return null
      */
-    private function drawAvlNode($x, $y, $node)
+    public function drawAvlNode($x, $y, $node)
     {
         $black = imagecolorallocate($this->image, 0, 0, 0);
         $nodeColor = imagecolorallocate($this->image, $this->nodeColor[0], $this->nodeColor[1], $this->nodeColor[2]);
@@ -172,7 +172,7 @@ class BinaryTreeImage
      * @param $x，当前节点的x坐标 $y，当前节点的y坐标 $node，当前节点的引用
      * @return null
      */
-    private function drawRbtNode($x, $y, $node)
+    public  function drawRbtNode($x, $y, $node)
     {
         $black = imagecolorallocate($this->image, 0, 0, 0);
         $gray = imagecolorallocate($this->image, 180, 180, 180);
