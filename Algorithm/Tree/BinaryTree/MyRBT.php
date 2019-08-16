@@ -250,6 +250,9 @@ class MyRBT
 
                         $current = $grandparent;
                         $parent = $current->parent;//指针移动至祖节点
+                        if ($parent == null) {
+                            $this->setColor($this->root, black);//最终要记得把根节点颜色改为黑色
+                        }
                     } else {//叔叔节点为黑色
                         if ($current == $parent->right) {//当前节点为右子
                             //先对父节点rr旋转
@@ -276,6 +279,9 @@ class MyRBT
 
                         $current = $grandparent;
                         $parent = $current->parent;//指针移动至祖节点
+                        if ($parent == null) {
+                            $this->setColor($this->root, black);//最终要记得把根节点颜色改为黑色
+                        }
                     } else {//叔叔节点是黑色
                         if ($current == $parent->left) {
                             $this->debug("ll rotation <br>\r\n");
@@ -291,7 +297,7 @@ class MyRBT
                     $this->debug("fixing {$element} change  grandparent node :" . print_r($grandparent, true) . " <br>\r\n");
                 }
             }
-            $this->setColor($this->root, black);//最终要记得把根节点颜色改为黑色
+
 
             $this->debug("root node :" . print_r($this->root, true) . " <br>\r\n");
         }
@@ -320,9 +326,13 @@ class MyRBT
      *  case 无子节点
      *      1.删除节点为红色                                                                                                  直接删除,不影响红黑树性质
      *      2.删除节点为黑色
-     *              2.1 其兄弟节点无子     
-     *              2.2 其兄弟节点有且仅有左子
-     *              2.3 其兄弟节点有且仅有右子
+     *              2.1 其兄弟节点无子                                                       =>      父亲节点置为黑,兄弟节点置为红
+     *              2.2 其兄弟节点有且仅有一子,且兄弟节点和其子节点在同一边(皆为左子或右子)     =>      先交换附近节点和兄弟节点颜色,并把父亲节点和兄弟节点之子置为黑色
+     *                  2.2.1 皆为左子                                                      =>     父节点LL旋转
+     *                  2.2.2 皆为右子                                                      =>     父节点RR旋转
+     *              2.3 其兄弟节点有且仅有一子,且兄弟节点和其子节点不在同一边(左右或右左)     =>      先交换兄弟节点和其子节点颜色
+     *                  2.2.1 兄弟为左,兄弟子为右                                          =>     LR旋转,转2.2
+     *                  2.2.2 兄弟为右,兄弟子为左                                           =>     RL旋转,转2.2
      *              2.4 其兄弟节点有两子
      *                  2.4.1 兄弟节点为黑色
      *                  2.4.2 兄弟节点为红色
@@ -330,7 +340,7 @@ class MyRBT
      *      1. 删除节点为黑色,其唯一子节点只能为红色(若为黑色那么删除节点到两子的黑色球数不用,违反红黑树第五条性质)
      *      2. 删除节点为红色,则因为性质3则唯一子节点只能为黑色,但也因此违背性质5,故不存在此情形
      *
-     * case 有双子节点,转化为前两者情形
+     * case 有双子节点,和BST一样,转化成删除左子树最大或者右子树最小
      */
     public function Delete($node, $element)
     {

@@ -381,7 +381,7 @@ class Rbt
 
     /**
      * （对外）删除指定节点
-     * @param $key 删除节点的key值
+     * @param $key mixed 删除节点的key值
      * @return null
      */
     function Delete($key)
