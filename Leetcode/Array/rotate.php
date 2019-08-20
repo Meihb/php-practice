@@ -37,16 +37,20 @@ class Solution
     /**
      * @param Integer[] $nums
      * @param Integer $k
-     * @return NULL
      */
     function rotate(&$nums, $k)
     {
         $length = count($nums);
-        $k = $k % $length;
-        for ($i = 1; $i <= $k; $i++) {
-            $this->rotate_once($nums);
+        $k = $k % $length;//真实后偏移量
+        if ($k == 0) return $nums;
+        $tmpArr = array_slice($nums, -$k);
+        for ($i = $length - $k - 1; $i >= 0; $i--) {
+            $nums[$i + $k] = $nums[$i];
         }
-
+        for ($i = 0; $i < $k; $i++) {
+            $nums[$i] = $tmpArr[$i];
+        }
+        return $nums;
 
     }
 
