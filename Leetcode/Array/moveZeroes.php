@@ -144,14 +144,181 @@ class Solution
 解释: 除了第一行的第一个数字从 5 改为 8 以外，空格内其他数字均与 示例1 相同。
      但由于位于左上角的 3x3 宫内有两个 8 存在, 因此这个数独是无效的。
 }
+
+
+
         /**
+         * @param Integer[] $arr
+         */
+    function validate(array $arr)
+    {
+        $tmp = [];
+        for ($i = 0; $i < count($arr); $i++) {
+            $value = $arr[$i];
+            if ($value != '.') {
+                if (isset($tmp[$value])) {
+//                        echo implode(',', $arr) . '存在重复' . $value . "<br>\r\n";
+                    return false;
+                }
+                $tmp[$value] = 1;
+            }
+        }
+        return true;
+    }
+
+    /**
      * @param String[][] $board
      * @return Boolean
      */
     function isValidSudoku($board)
     {
 
+
+        //鉴别横向
+        $longitudes = [];
+        $triples = [];
+        foreach ($board as $key => $lateral) {
+            if (!$this->validate($lateral)) {
+                return false;
+            }
+
+            foreach ($lateral as $k2 => $v2) {
+                if ($v2 != '.') {
+                    //分配纵向
+                    $longitudes[$k2][] = $v2;
+                    //分配 3*3
+                    $serialNum = 3 * intval(($key) / 3) + intval(($k2) / 3);//之前错误为key+1,想当然了
+                    $triples[$serialNum][] = $v2;
+                }
+
+            }
+
+        }
+//        var_dump($longitudes, $triples);
+        //竖向鉴别
+        foreach ($longitudes as $longitude) {
+            if (!$this->validate($longitude)) {
+                return false;
+            }
+        }
+
+        //3*3鉴别
+        foreach ($triples as $triple) {
+            if (!$this->validate($triple)) {
+                return false;
+            }
+        }
+
+        return true;
+
     }
 
+    /**
+     *  旋转图像
+     * 给定一个 n × n 的二维矩阵表示一个图像。
+     *
+     * 将图像顺时针旋转 90 度。
+     *
+     * 说明：
+     *
+     * 你必须在原地旋转图像，这意味着你需要直接修改输入的二维矩阵。请不要使用另一个矩阵来旋转图像。
+     *
+     * 示例 1:
+     *
+     * 给定 matrix =
+     * [
+     * [1,2,3],
+     * [4,5,6],
+     * [7,8,9]
+     * ],
+     *
+     * 原地旋转输入矩阵，使其变为:
+     * [
+     * [7,4,1],
+     * [8,5,2],
+     * [9,6,3]
+     * ]
+     * 示例 2:
+     *
+     * 给定 matrix =
+     * [
+     * [ 5, 1, 9,11],
+     * [ 2, 4, 8,10],
+     * [13, 3, 6, 7],
+     * [15,14,12,16]
+     * ],
+     *
+     * 原地旋转输入矩阵，使其变为:
+     * [
+     * [15,13, 2, 5],
+     * [14, 3, 4, 1],
+     * [12, 6, 8, 9],
+     * [16, 7,10,11]
+     * ]
+     */
+
+    /**
+     * 每次处理一个n边长的正方形,在处理n-2的正方形,
+     * @param Integer[][] $matrix
+     * @return NULL
+     */
+    function rotate(&$matrix)
+    {
+        $matrixLength = count($matrix);
+        $deepLength = floor($matrixLength / 2);
+
+        for ($i = 0; $i < $deepLength; $i++) {
+            $sideLength = $matrixLength - 2 * $i;
+            $leftup = ($matrix[$i])[$i];
+            $rightUp = ($matrix[$i])[$i + $sideLength - 1];
+            $leftDown = ($matrix[$i + $sideLength - 1])[$i];
+            $rightDown = ($matrix[$i + $sideLength - 1])[$i + $sideLength - 1];
+            $tmp = array_slice($matrix[$i], $i, $sideLength);
+            //左边 平移到 上边
+            for ($j = $i; $j <= $i + $sideLength - 1; $j++) {//要从两个边重叠的地方开始遍历,以免边缘参数被提前改变
+                $pos = $sideLength - 1 - ($j - $i) + $i;
+//                echo "matrix[$j][$i]平移到matrix[$i][$pos]\r\n";
+//                var_dump(($matrix[$j])[$i], ($matrix[$i])[$pos]);
+                $matrix[$i][$pos] = $matrix[$j][$i];
+            }
+//            echo '左边 平移到 上边' . "<br>\r\n";
+//            var_dump($matrix);
+            //下边平移到 左边
+            for ($j = $i; $j <= $i + $sideLength - 1; $j++) {
+                $pos = ($j - $i) + $i;
+//                echo "matrix[$i + $sideLength - 1][$j]平移到matrix[$pos][$i]\r\n";
+//                var_dump($matrix[$i + $sideLength - 1][$j], $matrix[$pos][$i]);
+                $matrix[$pos][$i] = $matrix[$i + $sideLength - 1][$j];
+            }
+//            echo '下边平移到 左边' . "<br>\r\n";
+//            var_dump($matrix);
+            //右边 平移到 下边
+            for ($j = $i + $sideLength - 1; $j >= $i; $j--) {
+                $pos = $i+$sideLength - 1 - $j + $i;
+//                echo "i is $i,j is $j\r\n";
+//                echo "matrix[$j][$i + $sideLength - 1][$j]平移到matrix[$i + $sideLength - 1][ $sideLength - 1 - $j + $i]\r\n";
+//                var_dump($matrix[$j][$i + $sideLength - 1], $matrix[$i + $sideLength - 1][$pos]);
+                $matrix[$i + $sideLength - 1][$pos] = $matrix[$j][$i + $sideLength - 1];
+            }
+//            echo '右边 平移到 下边' . "<br>\r\n";
+//            var_dump($matrix);
+            //将tmp数组 平移到 右边
+            for ($j = 0; $j < $sideLength; $j++) {
+                $matrix[$i + $j][$i + $sideLength - 1] = $tmp[$j];
+            }
+//            echo "第$i 次上到右" . "<br>\r\n";
+//            var_dump($matrix);
+        }
+        return;
+    }
 
 }
+
+//$testArr = [["8", "3", ".", ".", "7", ".", ".", ".", "."], ["6", ".", ".", "1", "9", "5", ".", ".", "."], [".", "9", "8", ".", ".", ".", ".", "6", "."], ["8", ".", ".", ".", "6", ".", ".", ".", "3"], ["4", ".", ".", "8", ".", "3", ".", ".", "1"], ["7", ".", ".", ".", "2", ".", ".", ".", "6"], [".", "6", ".", ".", ".", ".", "2", "8", "."], [".", ".", ".", "4", "1", "9", ".", ".", "5"], [".", ".", ".", ".", "8", ".", ".", "7", "9"]];
+//var_dump((new Solution())->isValidSudoku($testArr));
+$testArr = [[5, 1, 9, 11], [2, 4, 8, 10], [13, 3, 6, 7], [15, 14, 12, 16]];
+//$testArr = [[4, 8], [3, 6]];
+var_dump((new Solution())->rotate($testArr));
+var_dump($testArr);
+
+

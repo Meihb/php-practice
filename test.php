@@ -361,3 +361,8 @@ var_dump($a2);
 //echo 'result:';
 //var_dump($a1);//对象的赋值是传址赋值
 
+/*
+$arr = [0, 1, 2, 3, 4];
+var_dump(array_slice($arr, 2, 2,true));
+var_dump($arr);
+*/
