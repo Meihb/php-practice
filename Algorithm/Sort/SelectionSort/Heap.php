@@ -79,6 +79,7 @@ function HeapAdjust(array &$H, $s, $length)
         }
 
 
+
     }
 }
 
