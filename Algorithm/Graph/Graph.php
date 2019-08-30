@@ -173,8 +173,20 @@ class Graph
 
     /**
      * 关键路径 Activity On Edge网络 每一个边带有意义,顶点表示边结束
+     * 绝对不允许厌恶的活动路径,即一下 机动时间为0的路径
+     * 入度即表示前置条件,和aov其实一样的
      */
-    public function (){
+    /*
+    1.工期
+    Earlist[0] = 0;
+    Earlist[j] = max {Earlist[i]+C<i,j>| <i,j>∈E};C<i,j>表示从i指向j的权重
+    2.机动时间 可空闲的时间
+    latest[last] = Earlist[last]
+    Latest[i] = min{Latest[j]-C<i,j>|<i,j>∈E}
+    D<i,j> = Latest[j]-Earlist[i]-C<i,j>;//对于每一个边来说,用边尾节点的最晚时间 - 边首节点的最早时间 -边权重 即为 此条边的机动时间
+     */
+    public function AOE()
+    {
 
     }
 }
