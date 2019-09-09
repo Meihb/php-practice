@@ -21,4 +21,40 @@ $params = [
         ]
     ]
 ];
-$client->indices()->create($params);
+$params = [
+    'index' => 'my_index',
+    'type' => 'my_type',
+    'id' => 'my_id',
+    'body' => ['testField' => 'abc']
+];
+
+$response = $client->index($params);
+print_r($response);
+
+
+
+
+$params = [
+    'index' => 'my_index',
+    'type' => 'my_type',
+    'id' => 'my_id'
+];
+
+$response = $client->get($params);
+print_r($response);
+
+
+$params = [
+    'index' => 'my_index',
+    'type' => 'my_type',
+    'body' => [
+        'query' => [
+            'match' => [
+                'testField' => 'abc'
+            ]
+        ]
+    ]
+];
+
+$response = $client->search($params);
+print_r($response);
