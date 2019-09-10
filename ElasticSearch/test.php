@@ -7,11 +7,14 @@
  */
 
 use Elasticsearch\ClientBuilder;
+
 require '../vendor/autoload.php';
+
 
 $client = ClientBuilder::create()->setHosts(['118.25.41.135'])->build();
 
 
+//创建index(mysql中的database)
 $params = [
     'index' => 'myindex', #index的名字不能是大写和下划线开头
     'body' => [
@@ -21,17 +24,15 @@ $params = [
         ]
     ]
 ];
-$params = [
-    'index' => 'my_index',
-    'type' => 'my_type',
-    'id' => 'my_id',
-    'body' => ['testField' => 'abc']
-];
+//$params = [
+//    'index' => 'my_index',
+//    'type' => 'my_type',
+//    'id' => 'my_id',
+//    'body' => ['testField' => 'abc']
+//];
 
 $response = $client->index($params);
 print_r($response);
-
-
 
 
 $params = [
@@ -58,3 +59,38 @@ $params = [
 
 $response = $client->search($params);
 print_r($response);
+
+/*
+$params = [
+    'index' => 'test',
+    'type' => 'test',
+    'id' => 1,
+    'client' => [
+        'future' => 'lazy',
+        'ignore' => [404,]
+    ]
+];
+
+$future = $client->get($params);
+
+var_dump($doc = $future['_source']);
+
+for ($i = 0; $i < 100; $i++) {
+    $params = [
+        'index' => 'test',
+        'type' => 'test',
+        'id' => $i,
+        'client' => [
+            'future' => 'lazy',
+            'ignore' => [404,]
+        ]
+    ];
+
+    $futures[] = $client->get($params);     //queue up the request
+}
+
+
+foreach ($futures as $future) {
+    // access future's values, causing resolution if necessary
+    var_dump( $future['_source']);
+}

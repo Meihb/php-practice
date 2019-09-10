@@ -134,12 +134,14 @@ class Graph
     }
 
 
+    //最小生成树一
     public function Prim()
     {
 
     }
 
 
+    //最小生成树二
     public function Kruskal()
     {
 

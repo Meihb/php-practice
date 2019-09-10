@@ -120,14 +120,14 @@ $active = null;
 do {
     $mrc = curl_multi_exec($mh, $active);
 } while ($mrc == CURLM_CALL_MULTI_PERFORM);
-while($active && $mrc == CURLM_OK){
-    if(curl_multi_select($mh)!=-1){
-        do{
-            $mrc = curl_multi_exec($mh,$active);
-        }while($mrc == CURLM_CALL_MULTI_PERFORM);
+while ($active && $mrc == CURLM_OK) {
+    if (curl_multi_select($mh) != -1) {
+        do {
+            $mrc = curl_multi_exec($mh, $active);
+        } while ($mrc == CURLM_CALL_MULTI_PERFORM);
     }
 }
 //关闭句柄
-curl_multi_remove_handle($mh,$ch1);
-curl_multi_remove_handle($mh,$ch1);
+curl_multi_remove_handle($mh, $ch1);
+curl_multi_remove_handle($mh, $ch1);
 curl_multi_close($mh);
