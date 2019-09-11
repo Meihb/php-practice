@@ -30,9 +30,9 @@ $params = [
 //    'id' => 'my_id',
 //    'body' => ['testField' => 'abc']
 //];
-
+echo 'index:' . "<br>";
 $response = $client->index($params);
-print_r($response);
+echo print_r($response,true)."<br>";
 
 
 $params = [
@@ -42,7 +42,7 @@ $params = [
 ];
 
 $response = $client->get($params);
-print_r($response);
+echo "get:<br>".print_r($response,true)."<br>";
 
 
 $params = [
@@ -57,8 +57,9 @@ $params = [
     ]
 ];
 
+
 $response = $client->search($params);
-print_r($response);
+echo "search <br>".print_r($response)."<br>";
 
 /*
 $params = [
