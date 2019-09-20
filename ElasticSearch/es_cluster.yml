@@ -1,0 +1,69 @@
+version: '2.2'
+services:
+  elasticsearch:
+    # image: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+    # 这里使用自己制作的安装了ik插件的镜像
+    image: elasticsearch:${ELASTICSEARCH_VERSION}
+    container_name: elasticsearch
+    environment:
+      # 集群的名称，名称一样的组成一个集群
+      - cluster.name=docker-es-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      # 设置允许跨域，方便head插件访问
+      - "http.cors.enabled=true"
+      - "http.cors.allow-origin=*"
+      # 这里的elasticsearch,elasticsearch2,elasticsearch3是指的设置的container_name，容器内部可以通过container_name相互网络访问
+      - "discovery.zen.ping.unicast.hosts=elasticsearch,elasticsearch2"
+      - node.name=elasticsearch
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      # 将索引数据挂载到名为esdata1的docker volume，可以通过-v参数删除（如docker stop -v或者docker-compose down -v）
+      - esdata1:/usr/share/elasticsearch/data
+      # 将日志目录挂载到物理机docker-compose.yml目录下的logs/es目录下
+      - ./logs/es/:/usr/share/elasticsearch/logs/:rw
+      # 下面是将索引数据挂载到物理机docker-compose.yml目录下的data/es目录下
+      # - ./data/es/:/usr/share/elasticsearch/data:rw
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - esnet
+  elasticsearch2:
+    # image: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+    image: elasticsearch:${ELASTICSEARCH_VERSION}
+    container_name: elasticsearch2
+    environment:
+      - cluster.name=docker-es-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.zen.ping.unicast.hosts=elasticsearch,elasticsearch2"
+      - "http.cors.enabled=true"
+      - "http.cors.allow-origin=*"
+      - node.name=elasticsearch2
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata2:/usr/share/elasticsearch/data
+      - ./logs/es2/:/usr/share/elasticsearch/logs/:rw
+      # - ./data/es2/:/usr/share/elasticsearch/data:rw
+    ports:
+      - 9201:9200
+      - 9301:9300
+    networks:
+      - esnet
+
+
+volumes:
+  esdata1:
+    driver: local
+  esdata2:
+    driver: local
+
+networks:
+  esnet:
