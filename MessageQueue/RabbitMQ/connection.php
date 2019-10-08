@@ -7,6 +7,7 @@
  */
 chdir(dirname(__FILE__));
 
+$config = require_once "./config.php";
 require_once $config['vendor']['path'] . '/autoload.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
@@ -18,7 +19,7 @@ use PhpAmqpLib\Message\AMQPMessage;
  */
 function getConn()
 {
-    $config = require_once "./config.php";
+    global $config;
     return $connection = new AMQPStreamConnection(
         $config['rabbitmq']['host'],
         $config['rabbitmq']['port'],
