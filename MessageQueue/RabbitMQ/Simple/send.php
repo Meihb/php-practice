@@ -22,7 +22,7 @@ $channel = $connection->channel();
 $channel->queue_declare('hello', false, false, false, false);
 
 $msg = new AMQPMessage('Hello World!');
-//第三个参数为queue的键名
+//第三个参数为queue的键名,其实当前是direct exchange模式下
 $channel->basic_publish($msg, '', 'hello');
 
 echo " [x] Sent 'Hello World!'\n";
