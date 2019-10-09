@@ -20,7 +20,8 @@ $severities = array_slice($argv, 1);
 if (empty($severities)) {
     file_put_contents('php://stderr', "Usage:$argv[0] [info] [warning] [error]\n");
     exit(1);
-} 
+}
+print_r($severities);
 foreach ($severities as $severity) {
     //绑定到交换机,键名不同 至同一个队列
     $channel->queue_bind($queue_name, 'direct_logs', $severity);
