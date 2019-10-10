@@ -22,11 +22,41 @@ class FibonacciRpcClient
     {
         $this->connection = $connection;
         $this->channel = $this->connection->channel();
+        //创建临时队列,以作 回调队列,待消费者处理完之后,发送消息到此队列中,再被生产者消费
         list($this->callback_queue, ,) = $this->channel->queue_declare(
             "", false, false, true, false);
+        //生产者作为消费者回调队列的消费者,消费方法是 on_response
+        /*1. 直接回调非静态方法
+
+call_user_func('my_callback_function'); 
+
+2.类静态方法回调
+
+all_user_func('MyClass::myCallbackMethod');
+
+3.对象方法回调
+
+call_user_func(array($obj, 'myCallbackMethod'));
+
+ 4: 调用父类静态方法
+class A {
+    public static function who() {
+        echo "A\n";
+    }
+}
+
+class B extends A {
+    public static function who() {
+        echo "B\n";
+    }
+}
+
+call_user_func(array('B', 'parent::who')); // A
+*/
         $this->channel->basic_consume(
             $this->callback_queue, '', false, false, false, false,
-            array($this, 'on_response'));
+            [$this, 'on_response']
+        );
     }
 
     public function on_response($rep)
