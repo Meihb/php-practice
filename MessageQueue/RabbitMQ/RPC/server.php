@@ -24,7 +24,7 @@ function fib($n)
 echo "[X] Awaiting RPC requests\n";
 
 $callback = function ($req) {
-    print_r($req);
+//    print_r($req);
     $n = intval($req->body);
     echo " [.] fib(", $n, ")\n";
 
@@ -34,7 +34,7 @@ $callback = function ($req) {
     );
 
     //发布至回调队列
-    $req->deliver_info['channel']->basic_publish(
+    $req->delivery_info['channel']->basic_publish(
         $msg, '', $req->get('reply_to')
     );
     //消费确认

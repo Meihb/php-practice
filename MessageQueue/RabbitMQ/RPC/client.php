@@ -31,6 +31,7 @@ class FibonacciRpcClient
 
     public function on_response($rep)
     {
+        //鉴定关联id是否正确
         if ($rep->get('correlation_id') == $this->corr_id) {
             $this->response = $rep->body;
         }
@@ -59,5 +60,9 @@ class FibonacciRpcClient
 $fibonacci_rpc = new FibonacciRpcClient($connection);
 
 
-$response = $fibonacci_rpc->call(30);
+if (!(isset($argv[1]) && !empty($argv[1]) && is_numeric($argv[1]) && $argv[1] > 0)) {
+    file_put_contents("php://stderr", "Usage:$argv[0] [integer]");
+    exit(1);
+}
+$response = $fibonacci_rpc->call($argv[1]);
 echo " [.] Got ", $response, "\n";
