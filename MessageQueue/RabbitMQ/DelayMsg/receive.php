@@ -30,7 +30,6 @@ $callback = function ($msg){
     $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
 
 };
-
 //只有consumer已经处理并确认了上一条message时queue才分派新的message给它
 $channel->basic_qos(null, 1, null);
 $channel->basic_consume('delay_queue','',false,false,false,false,$callback);
