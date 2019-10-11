@@ -15,8 +15,9 @@ $connection = getConn();
 
 $channel = $connection->channel();
 
+//出于解耦的和实际应用的考虑,实际上仅需要完成死信路由和队列至消费一段即可
 $channel->exchange_declare('delay_exchange', 'direct',false,false,false);
-$channel->exchange_declare('cache_exchange', 'direct',false,false,false);
+//$channel->exchange_declare('cache_exchange', 'direct',false,false,false);
 
 
 $channel->queue_declare('delay_queue',false,true,false,false,false);

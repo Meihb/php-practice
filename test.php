@@ -366,3 +366,8 @@ $arr = [0, 1, 2, 3, 4];
 var_dump(array_slice($arr, 2, 2,true));
 var_dump($arr);
 */
+ob_clean();
+$a = 1;
+$b = $a > 1 ?? 2;
+var_dump($b);
+
