@@ -13,29 +13,31 @@ use PhpAmqpLib\Message\AMQPMessage;
 $connection = getConn();
 $channel = $connection->channel();
 
-$channel->exchange_declare("confirm_test", "direct", false, false, true);
 
 $channel->queue_declare("confirm_queue", false, false, false, true);
 
-$channel->queue_bind("confirm_queue", "confirm_test", "test");
 
 echo ' [*] Waiting for logs. To exit press CTRL+C', "\n";
 
 $callback = function ($msg) {
-    print_r($msg->delivery_info['channel']->callbacks);
+//    print_r($msg->delivery_info['channel']->callbacks);
     echo " [x] Received ", $msg->body, "\n";
-    echo " [x] Done", "\n";
-    $ack = (strpos($msg->body, 'ack'));
-    echo " [x] ack is  " . var_dump($ack), "\n";
-    if ($ack >= 0) {
+    sleep(substr_count($msg->body, "."));
+    $ack = strpos($msg->body, 'ack');
+    if ($ack >  0) {
+        echo " [x] ack is acked " , "\n";
         $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);//手动消费确认
     } else {
-        $msg->delivery_info['channel']->basic_reject($msg->delivery_info['delivery_tag'], true);//手动消费否决
+        echo " [x] ack is rejected " ,"\n";
+        //手动消费否决,在多开两个消费者的情况下,一边done,另一边就会获取,rather interesting!
+        $msg->delivery_info['channel']->basic_reject($msg->delivery_info['delivery_tag'], true);
     }
+    echo " [x] Done", "\n";
 };
-$channel->basic_consume("confirm_queue", '', false, true, false, false,$callback );
+$channel->basic_qos(null,1,null);
+$channel->basic_consume("confirm_queue", '', false, false, false, false, $callback);
 
-while (count($channel->callbacks)) {
+while ($channel->is_consuming()) {
     $channel->wait();
 }
 
