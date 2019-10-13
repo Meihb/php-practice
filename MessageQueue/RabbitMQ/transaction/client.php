@@ -16,21 +16,21 @@ $channel = $connection->channel();
 $channel->confirm_select();//开启确认
 
 $channel->set_ack_handler(
-    function (AMQPMessage $AMQPMessage) {
+    function ( $AMQPMessage) {
         var_dump(func_get_args());
         var_dump($AMQPMessage);
         echo "Message acked with content " . $AMQPMessage->body . PHP_EOL;
     }
 );
 $channel->set_nack_handler(
-    function (AMQPMessage $AMQPMessage) {
+    function ( $AMQPMessage) {
         var_dump(func_get_args());
         var_dump($AMQPMessage);
         echo "Message nacked with content " . $AMQPMessage->body . PHP_EOL;
     }
 );
 $channel->set_return_listener(
-    function (AMQPMessage $AMQPMessage) {
+    function ( $AMQPMessage) {
         var_dump(func_get_args());
         var_dump($AMQPMessage);
         echo "Message returned with content " . $AMQPMessage->body . PHP_EOL;
@@ -58,7 +58,7 @@ immediate
 概括来说，mandatory标志告诉服务器至少将该消息route到一个队列中，否则将消息返还给生产者；
 immediate标志告诉服务器如果该消息关联的queue上有消费者，则马上将消息投递给它，如果所有queue都没有消费者，直接把消息返还给生产者，不用将消息入队列等待消费者了
 */
-$channel->basic_publish($msg, "", "confirm_queue1", true);
+$channel->basic_publish($msg, "", "confirm_queue", true);
 echo " [x] Sent ", $data, "\n";
 //阻塞等待消息确认
 //$channel->wait_for_pending_acks();
