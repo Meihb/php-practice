@@ -16,6 +16,7 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 
+//define("AMQP_DEBUG", true);
 /**
  * @return AMQPStreamConnection
  */

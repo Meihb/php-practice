@@ -11,10 +11,10 @@ return [
         'path' => dirname(dirname(__DIR__)) . '/vendor'
     ],
     'rabbitmq' => [
-        'host' => '118.25.41.135',
+        'host' => 'localhost',
         'port' => '5672',
-        'login' => 'myuser',
-        'password' => 'mypass',
+        'login' => 'guest',
+        'password' => 'guest',
         'vhost' => '/'
     ]
 ];

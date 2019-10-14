@@ -13,25 +13,25 @@ use PhpAmqpLib\Message\AMQPMessage;
 $connection = getConn();
 $channel = $connection->channel();
 
+
 $channel->confirm_select();//开启确认
 
 $channel->set_ack_handler(
-    function ( $AMQPMessage) {
-        var_dump(func_get_args());
+    function ($AMQPMessage) {
+        //此message虽也是AMQPMessage,但是好多方法并不存在
         var_dump($AMQPMessage);
+        var_dump($AMQPMessage->get("timestamp"));
         echo "Message acked with content " . $AMQPMessage->body . PHP_EOL;
     }
 );
 $channel->set_nack_handler(
-    function ( $AMQPMessage) {
-        var_dump(func_get_args());
+    function ($AMQPMessage) {
         var_dump($AMQPMessage);
         echo "Message nacked with content " . $AMQPMessage->body . PHP_EOL;
     }
 );
 $channel->set_return_listener(
-    function ( $AMQPMessage) {
-        var_dump(func_get_args());
+    function ($AMQPMessage) {
         var_dump($AMQPMessage);
         echo "Message returned with content " . $AMQPMessage->body . PHP_EOL;
     }
@@ -46,7 +46,9 @@ $data = date("Y-m-d H:i:s") . " send: " . implode(' ', array_slice($argv, 1));
 $channel->queue_declare("confirm_queue", false, false, false, true);
 
 
-$msg = new AMQPMessage($data,['mytype'=>"myinfo"]);
+//看起来AMQPMESSAGE不支持自定义的propertity,其使用了array_intersect_key保证了只能是14个已定义属性
+//basic_reject好像也无法中途改变message 的propertity的value
+$msg = new AMQPMessage($data, ['correlation_id' => (string)2, 'timestamp' => time()]);
 
 /*
 mandatory
