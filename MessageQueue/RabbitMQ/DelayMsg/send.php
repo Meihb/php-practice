@@ -20,9 +20,18 @@ $channel->exchange_declare('cache_exchange', 'direct', false, false, false);
 $channel->exchange_declare('delay_exchange', 'direct', false, false, false);
 
 $table = new AMQPTable();
+/*DLX  Dead-letter-exchange
+消息变成死信一向有一下几种情况：
+
+消息被拒绝（basic.reject/ basic.nack）并且requeue=false
+消息TTL过期（参考：RabbitMQ之TTL（Time-To-Live 过期时间））
+队列达到最大长度
+*/
 $table->set('x-dead-letter-exchange', 'delay_exchange');//死信交换机 表示过期后由哪个exchange处理
 $table->set('x-dead-letter-routing-key', 'delay_exchange');//死信交换机 键值  表示过期后以什么route_key交换
-$table->set('x-message-ttl', 15000);  //存活时长   下面的过期时间不能超过,单位ms,若单独设置的时间超过此时间,则按照此时间计算
+$table->set('x-message-ttl', 15000);  //存活时长 单位ms  队列ttl和消息ttl两者不同时取较小值,
+//区别为:queue ttl的删除一旦消息过期,则立刻会被删除,因为过期消息一定在队列头部,而消息ttl由于不一致,一般在即将被消费时判断是否过期以待删除
+$table->set('x-expires', 10000); //队列自身的超时时间,无consumer、未被重新declare、未调用过basic.get.但也不能保证即刻删除
 
 
 $channel->queue_declare('cache_queue', false, true, false, false, false, $table);//缓存队列
