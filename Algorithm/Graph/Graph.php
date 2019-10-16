@@ -73,7 +73,10 @@ class Graph
             Collected[v] = true;//收录节点
             for(w in v.neighbours)//可联通的邻接点
                 if(collected[w]==false)//未收录
-                    if(E(v,w)+dist[w]<dist[w]) dist[w] = [v];//作为一个未收录的节点,其可能被多次修改(如果其和Collected多个节点都是邻接可联通情况下,这样可以保证最终路径最短)
+                    if(E(v,w)+dist[w]<dist[w]){
+                        dist[W] = dist[V] + E<V,W> ;//作为一个未收录的节点,其可能被多次修改(如果其和Collected多个节点都是邻接可联通情况下,这样可以保证最终路径最短)
+                        path[W] = v;
+            }
         }
     }
 

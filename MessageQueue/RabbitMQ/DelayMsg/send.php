@@ -53,9 +53,10 @@ if (empty($ttl)) {
 
 }
 
+//容易堵塞,所以expiration这个最好是一致情况下处理,终究是个queue
 $msg = new AMQPMessage("$message  @ " . date('Y-m-d H:i:s'),
     [
-        'expiration' => $ttl,
+        'expiration' => $ttl*1000,
         'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT
     ]
 
