@@ -44,6 +44,7 @@ function HeapSort(array $H)
 function HeapBuild(array &$H)
 {
     $length = count($H);
+    //在数组下表从零开始的基础上,找到最后一个拥有子节点的节点位置,一直leftchild =2*parent+1,则最后一个至少拥有左子的节点满足 2*parent+1>=len-1,parent>=(len-2)/2,取整即可
     $last_parent_has_child_key = floor(($length - 2) / 2);//最后一个拥有子节点的父节点位置,因为最后一个节点偏移为len-1
     for ($i = $last_parent_has_child_key; $i >= 0; $i--) {
         HeapAdjust($H, $i, $length);
@@ -61,11 +62,11 @@ function HeapAdjust(array &$H, $s, $length)
 {
     $child = 2 * $s + 1;//左子偏移量,为啥不是2$s呢，因为从0开始计数的啊
 
-    while ($child < $length) {//数组覆盖到左子范围
+    while ($child < $length) {//数组覆盖到左子范围 len-1>=2*node+1
         $tmp = $H[$s];
         echo '当前处理' . $s . "节点:{$H[$s]}" . '为父节点的部分堆', "<br>";
         if ($child + 1 < $length && $H[$child] < $H[$child + 1]) {//存在右子,且左子小于右子;则右子为较大值
-            $child++;
+            $child += 1;
         }
         if ($H[$child] > $H[$s]) {//较小的子节点小于父节点
             $H[$s] = $H[$child];// 对换
@@ -79,8 +80,26 @@ function HeapAdjust(array &$H, $s, $length)
         }
 
 
-
     }
 }
 
 HeapSort($list_todo);
+
+/*
+ * 空间复杂度很明显,原地算法,O(1)
+ * 时间复杂度相对复杂 首先 堆深度和 节点总数 n的关系,k = [logn]+1,也可以简化为lgn（底数为2,省略以简洁）
+ *
+ * 分为两部分计算,一个是heapBuild,另一个为heapAdjust
+ * HeapBuild:
+ *           从倒数第二层的最右边非叶子节点开始向前计算
+ *          S=∑(i=1->k-1) 2^(i-1) * (k-i);2^i-1表示第i层的元素个数,再次我们以完全二叉树计算,(k-i)表示每个元素需要对比的次数
+ *          S = 2^0*(k-1)+2^1*(k-2)+.............+2^(k-3)*(2)+2^(k-2)*1;
+ *         2S =           2^1*(k-1)+2^2*(k-2)+...+2^(k-3)*(3)+2^(k-2)*2+2^(k-1)*1;
+ *    2s - s = -k+1+2^1+2^2+...+2^k-3+2^k-2+2^k-1 = 2^k-k-1;将k=lg n 代入
+ *          S = n-lg(n)-1 = O(n);
+ * HeapAdjust:
+ *          调整需要经过n-1次,从n的长度一直调整到2的长度,而每次需要调整lg(n)此
+ *          S = lg2+lg3+...+lgn = lg(n!)
+ *          有Stiling's Formula等一系列换算,lg(n!)和nlg(n)为同阶函数
+ * 求得O(n) = O(nlgn+n) = O(lgn)
+ */

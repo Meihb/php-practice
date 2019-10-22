@@ -7,6 +7,10 @@
  */
 include_once "../common.php";
 
+/**
+ * 不稳定排序
+ * @param array $a
+ */
 function shellsSort(array $a)
 {
     $len = count($a);

@@ -9,7 +9,7 @@
 require_once "../common.php";
 /*
  * 快速排序 如其名
- *
+ * lg(N)
  * 1）设置两个变量i、j，排序开始的时候：i=0，j=N-1；
 2）以第一个数组元素作为关键数据，赋值给key，即key=A[0]；
 3）从j开始向前搜索，即由后开始向前搜索(j--)，找到第一个小于key的值A[j]，将A[j]和A[i]的值交换；
@@ -27,7 +27,7 @@ function QuickSort(array &$arr, $low, $high)
     $initiate_low = $low;
     $initiate_high = $high;
     while ($low < $high) {
-        while ($high > $low) {//从尾部开始迁移,寻找较小值
+        while ($high > $low) {//从尾部开始迁移,寻找较小值,为什么呢,因为我们的基准值取得是最小位置的数
             echo '从尾部前移<br>';
             if ($arr[$high] >= $pivotVal) {
                 echo 'low:' . $low . ',high:' . $high . ' nothing to do' . "<br>";
