@@ -22,8 +22,8 @@ function merge(array $src, array $result, $start, $end, $middle)
 {
     echo 'start merge:' . implode(',', $src) . "<br>";
     echo "from $start to $middle merge with " . ($middle + 1) . " to $end" . "<br>";
-    $leftArr = implode(',',array_slice($src, $start, $middle - $start + 1));
-    $rightArr = implode(',',array_slice($src, $middle+1, $end - $middle));
+    $leftArr = implode(',', array_slice($src, $start, $middle - $start + 1));
+    $rightArr = implode(',', array_slice($src, $middle + 1, $end - $middle));
     echo "Thus $leftArr merge with $rightArr <br>";
     for ($j = $start, $k = $middle + 1; $j <= $middle && $k <= $end;) {
         $src[$j] <= $src[$k] ? $result[$start++] = $src[$j++] : $result[$start++] = $src[$k++];
@@ -66,6 +66,11 @@ function mergeSort(array $arr)
 
 }
 
+/**
+ * 迭代归并
+ * @param array $arr
+ * @return array
+ */
 function mergeSort2(array $arr)
 {
     echo '迭代归并方法:<br>';
@@ -83,12 +88,12 @@ function mergeSort2(array $arr)
         //此时已无等长子序列对,只剩下两种情况,要么一个子序列长度都不足,此情况无需处理,要么不等长子序列对,需要处理
         if ($pos + $inc - 1 < $length - 1) {//同理左边-1,为何不取等,取等情况下只有一个子序列不成对
             //不等长子序列对
-            $arr =  merge($arr, $arr, $pos, $length - 1, $pos + $inc - 1);
+            $arr = merge($arr, $arr, $pos, $length - 1, $pos + $inc - 1);
         }
         $inc = $inc * 2;
     }
 
-    echo 'results:' . implode(',', $arr)."<br>";
+    echo 'results:' . implode(',', $arr) . "<br>";
     return $arr;
 
 }
@@ -134,6 +139,35 @@ function divideAndConquerSort(array $arr)
 
 
     return dcMerge($left_arr, $right_arr);
+}
+
+function merge2($arr, $left, $middle, $right)
+{
+    $temp = $arr;
+    for ($i = $left, $j = $middle + 1; $i <= $middle && $j <= $right;) {
+        if ($arr[$i] <= $arr[$j]) {
+            $temp[$left++] = $arr[$i++];
+        } else {
+            $temp[$left++] = $arr[$j++];
+        }
+    }
+    while ($i < $middle) $temp[$left++] = $arr[$i++];
+    while ($j < $right) $temp[$left++] = $arr[$j++];
+
+    return $temp;
+}
+
+function divideAndConquerSort2(array $arr, int $left, int $right)
+{
+
+
+    if ($left < $right) {
+        $middle = ceil(($left + $right) / 2);
+        divideAndConquerSort2($arr, $left, $middle);
+        divideAndConquerSort2($arr, $middle + 1, $right);
+
+        $arr = merge2($arr, $left, $middle, $right);
+    }
 }
 
 //$arr = mergeSort($list_todo);
