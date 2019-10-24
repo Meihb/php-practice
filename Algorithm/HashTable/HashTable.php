@@ -14,7 +14,7 @@ class  HashTable
 
     /*
      * 为什么Cells这个数组的存储格式是个struct,为什么不能真删除,因为如果线性探测或者平方探测的情况下
-     * 空位表示探测应当结束,比如 h = mod 13例子下,怎么判断一个值不在此hashtable种呢,根据其hash值获取table value,在冲突情况下根绝探测方法直到遇到空位表示探测结束,
+     * 空位表示探测应当结束,比如 h = mod 13例子下,怎么判断一个值不在此hashtable种呢,根据其hash值获取table value,在冲突情况下根据探测方法直到遇到空位表示探测结束,
      * 如果贸然删除会导致错误的探测结束，Quod Erat Demonstrandum Q.E.D.
      */
     /*

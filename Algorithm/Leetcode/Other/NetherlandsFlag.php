@@ -55,4 +55,16 @@ function colorize(array $arr, array $config)
     echo implode(',', $res), "<br>";
 }
 
+function dualColorSort(array $arr)
+{
+    $less = 0;
+    $right = count($arr) - 1;
+
+    $cur = 0;
+
+}
+
+
 NetherlandsFlagSort($arr, 1);
+
+

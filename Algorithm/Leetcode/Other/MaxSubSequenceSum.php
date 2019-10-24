@@ -76,7 +76,7 @@ class Solution
      * @param $nums
      * @return int
      */
-    public function MaxSubseqSum4($nums)
+    public function maxSubSequenceSum4($nums)
     {
         $maxSum = $nums[0];
         $thisSum = 0;
@@ -100,7 +100,7 @@ class Solution
      * @param $nums
      * @return int
      */
-    public function MaxSubseqSum5($nums)
+    public function maxSubSequenceSum5($nums)
     {
         $maxSum = $nums[0];
         $thisSum = 0;
@@ -119,4 +119,4 @@ class Solution
 
 }
 
-var_dump((new Solution())->maxSubSequenceSum2([-2, 1, -3, 4, -1, 2, 1, -5, 4], 0, 8));
+var_dump((new Solution())->maxSubSequenceSum5([-2, 1, -3, 4, -1, 2, 1, -5, 4] ));
