@@ -18,7 +18,7 @@ $channel->confirm_select();//开启确认
 
 $channel->set_ack_handler(
     function ($AMQPMessage) {
-        //此message虽也是AMQPMessage,但是好多方法并不存在
+        //此message虽也是AMQPMessage,但是好多方法 并不存在
         var_dump($AMQPMessage);
         var_dump($AMQPMessage->get("timestamp"));
         echo "Message acked with content " . $AMQPMessage->body . PHP_EOL;
