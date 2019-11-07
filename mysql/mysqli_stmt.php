@@ -5,15 +5,9 @@
  * Date: 2018/7/19
  * Time: 10:35
  */
-$dbname = 'DQX_Act';
-$host = '10.2.0.12';
-$user = 'root';
-$port = '';
-$pwd = 'pQU0H3evY92aMbdZ';
+$conn = require_once "./config.inc.php";
 
 
-$conn = new mysqli($host, $user, $pwd, $dbname);
-$conn->set_charset('utf8');
 
 
 function tst1()
@@ -45,20 +39,20 @@ function tst1()
 }
 
 
-function tst_flexible_params(){
+function tst_flexible_params()
+{
     global $conn;
     $stmt = $conn->stmt_init();
     $stmt->prepare("SELECT id,pt_id FROM `ff14_recruit_personal_profile` WHERE id>=? AND group_id>=?");
 
-    $args = [1,5];
+    $args = [1, 5];
     $args = refValues($args);
     var_dump($args);
-    $callback = [$stmt,"bind_param"];
-    array_unshift($args,"ii");
+    $callback = [$stmt, "bind_param"];
+    array_unshift($args, "ii");
 
 
-
-    call_user_func_array($callback,$args);
+    call_user_func_array($callback, $args);
     $execute = $stmt->execute();
     $stmt->bind_result($id, $info);   //绑定结果格式
 
@@ -76,21 +70,19 @@ function tst_flexible_params(){
     }
 
 
-
-
-
     $stmt->close();
 //    $conn->close();
 }
 
-function execute_stmt(){
+function execute_stmt()
+{
     global $conn;
     $sql_str = "SELECT id,pt_id FROM `ff14_recruit_personal_profile` WHERE id>=? AND group_id>=?";
-    $params = ["ii",1,1];
+    $params = ["ii", 1, 1];
     $stmt = $conn->stmt_init();
-    $stmt->prepare( $sql_str);
-    if ( $stmt ){
-        foreach($params as $k=>$v){
+    $stmt->prepare($sql_str);
+    if ($stmt) {
+        foreach ($params as $k => $v) {
             $array[] = &$params[$k]; //注意此处的引用
         }
         call_user_func_array(array($stmt, 'bind_param'), $array); // 魔术方法直接call
@@ -119,16 +111,17 @@ function execute_stmt(){
  * @param $params
  * @return bool|mysqli_stmt
  */
-function stmt_execute($sql,$typeStr,$params){
+function stmt_execute($sql, $typeStr, $params)
+{
     global $conn;
     $stmt = $conn->stmt_init();
     $stmt->prepare($sql);
-    if($stmt){
-        foreach ($params as $key=>$param){
+    if ($stmt) {
+        foreach ($params as $key => $param) {
             $array[] = &$params[$key];
         }
-        array_unshift($array,$typeStr);
-        call_user_func_array([$stmt,'bind_param'],$array);
+        array_unshift($array, $typeStr);
+        call_user_func_array([$stmt, 'bind_param'], $array);
         if ($stmt->execute()) {
             return $stmt;
         } else {
@@ -138,7 +131,7 @@ function stmt_execute($sql,$typeStr,$params){
     return false;
 }
 
-stmt_execute(  "SELECT id,pt_id FROM `ff14_recruit_personal_profile` WHERE id>=? AND group_id>=?",'ii',$params = [1,1]);
+stmt_execute("SELECT id,pt_id FROM `ff14_recruit_personal_profile` WHERE id>=? AND group_id>=?", 'ii', $params = [1, 1]);
 
 function refValues($arr)
 {
