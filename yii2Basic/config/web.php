@@ -4,7 +4,7 @@ $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
 $config = [
-    'id' => 'basic',
+    'id' => 'basic',//id 属性用来区分其他应用的唯一标识ID。主要给程序使用。 为了方便协作，最好使用数字作为应用主体ID， 但不强制要求为数字。
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'aliases' => [

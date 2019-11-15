@@ -1,17 +1,38 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\LinkPager;
+use yii\grid\GridView;
 
+/* @var $this yii\web\View */
+/* @var $searchModel app\models\CountrySearch */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+
+$this->title = 'Countries';
+$this->params['breadcrumbs'][] = $this->title;
 ?>
-    <h1>Countries</h1>
-    <ul>
-        <?php foreach ($countries as $country): ?>
-            <li>
-                <?= Html::encode("{$country->name} ({$country->code})") ?>:
-                <?= $country->population ?>
-            </li>
-        <?php endforeach; ?>
-    </ul>
+<div class="country-index">
 
-<?= LinkPager::widget(['pagination' => $pagination]) ?>
+    <h1><?= Html::encode($this->title) ?></h1>
+
+    <p>
+        <?= Html::a('Create Country', ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
+
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+
+            'code',
+            'name',
+            'population',
+
+            ['class' => 'yii\grid\ActionColumn'],
+        ],
+    ]); ?>
+
+
+</div>
