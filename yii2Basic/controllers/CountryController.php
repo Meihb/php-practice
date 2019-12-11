@@ -124,4 +124,16 @@ class CountryController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public function actionIndex2()
+    {
+        return json_encode(['id' => 1, 'type' => 'string', 'info' => 'dsakjf']);
+    }
+
+    public function actionView2()
+    {
+        return $this->render('test', [
+
+        ]);
+    }
 }
