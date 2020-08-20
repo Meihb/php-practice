@@ -18,7 +18,7 @@ class RedLock
         $this->retryDelay = $retryDelay;
         $this->retryCount = $retryCount;
 
-        $this->quorum  = min(count($servers), (count($servers) / 2 + 1));
+        $this->quorum = min(count($servers), (count($servers) / 2 + 1));
     }
 
     public function lock($resource, $ttl)
@@ -31,7 +31,7 @@ class RedLock
         do {
             $n = 0;
 
-            $startTime = microtime(true) * 1000;
+            $startTime = microtime(true) * 1000;//microtime  10^-6s 微秒,*1000毫秒
 
             foreach ($this->instances as $instance) {
                 if ($this->lockInstance($instance, $resource, $token, $ttl)) {
@@ -50,7 +50,7 @@ class RedLock
                 return [
                     'validity' => $validityTime,
                     'resource' => $resource,
-                    'token'    => $token,
+                    'token' => $token,
                 ];
 
             } else {
@@ -74,7 +74,7 @@ class RedLock
     {
         $this->initInstances();
         $resource = $lock['resource'];
-        $token    = $lock['token'];
+        $token = $lock['token'];
 
         foreach ($this->instances as $instance) {
             $this->unlockInstance($instance, $resource, $token);
@@ -96,7 +96,7 @@ class RedLock
 
     private function lockInstance($instance, $resource, $token, $ttl)
     {
-        return $instance->set($resource, $token, ['NX', 'PX' => $ttl]);
+        return $instance->set($resource, $token, ['NX', 'PX' => $ttl]);//设置过期时间为毫秒单位
     }
 
     private function unlockInstance($instance, $resource, $token)

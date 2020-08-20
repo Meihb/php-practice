@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>管理系统</title>
+    <script src="http://static.web.sdo.com/mir2/js/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="../jquery.cookie/jquery.cookie.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+
+        $(function () {
+            // alert($.cookie('PHPSESSID'));
+            var phpsessid = $.cookie('PHPSESSID');
+            console.log(phpsessid);
+            $.ajax({
+                type: "GET",
+                url: "http://practice.com:8080/SessionCookie/domainSharing/haslogin.php",
+                data: "phpsessid=" + phpsessid,
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+
+                }
+            });
+
+        });
+    </script>
+</head>
+<body>
+<div id="dcWrap">
+    <!-- dcMain begin -->
+    <div id="dcMain">
+        <div id="urHere">管理系统<b>&gt;</b><strong>加密文件</strong>
+        </div>
+        <!--当前位置-->
+        <!--<div>-->
+        <!--<button type="button" class="layui-btn" id="upload_works" onclick="deleteUser(138021223112)">-->
+        <!--<i class="layui-icon">&#xe67c;</i>上传解密手机号文件-->
+        <!--</button>-->
+        <!--</div>-->
+        <!---->
+        <!--        <form action="getPhone.php" method="post"-->
+        <!--              enctype="multipart/form-data">-->
+        <!--            <label for="file">Filename:</label>-->
+        <!--            <input type="file" name="decodes" id="decodes" />-->
+        <!--            <br />-->
+        <!--            <input type="submit" name="submit" value="Submit" />-->
+        <!--        </form>-->
+
+
+    </div>
+</div>
+</body>
+</html>
