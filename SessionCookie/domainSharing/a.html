@@ -11,18 +11,36 @@
         $(function () {
             // alert($.cookie('PHPSESSID'));
             var phpsessid = $.cookie('PHPSESSID');
+
+
             console.log(phpsessid);
+            // $.ajax({
+            //     type: "GET",
+            //     url: "http://practice.snda.com/sessionCookie/domainsharing/hasLogin.php",
+            //     // data: "phpsessid=" + phpsessid,
+            //     xhrFields: {
+            //         withCredentials: true
+            //     },
+            //     crossDomain: true,
+            //     dataType: "json",
+            //     success: function (data) {
+            //         alert(data);
+            //
+            //     }
+            // });
             $.ajax({
                 type: "GET",
-                url: "http://practice.com:8080/SessionCookie/domainSharing/haslogin.php",
-                data: "phpsessid=" + phpsessid,
+                url: "http://practice.snda.com/sessionCookie/domainsharing/setcookie.php?id=3",
+                // data: "phpsessid=" + phpsessid,
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
                 dataType: "json",
                 success: function (data) {
-                    console.log(data);
 
                 }
             });
-
         });
     </script>
 </head>
@@ -32,6 +50,7 @@
     <div id="dcMain">
         <div id="urHere">管理系统<b>&gt;</b><strong>加密文件</strong>
         </div>
+        <input type="file" name="decodes" id="decodes"/>-->
         <!--当前位置-->
         <!--<div>-->
         <!--<button type="button" class="layui-btn" id="upload_works" onclick="deleteUser(138021223112)">-->

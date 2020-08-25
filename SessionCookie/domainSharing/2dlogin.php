@@ -9,6 +9,6 @@
 require_once "config.php";
 $session_id = session_id();
 echo "session_id:$session_id";
-$_SESSION['name'] = 'user1';
+$_SESSION['name'] = 'user2';
 
-//setcookie( "TestCookie",  session_id(),  time() + 3600,  "/", ".practice.com" );
+setcookie("PHPSESSID", session_id(), time() + 3600);
