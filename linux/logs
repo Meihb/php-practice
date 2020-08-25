@@ -1,0 +1,16 @@
+netstat -n | awk '/^tcp/ {++S[$NF]} END {for(a in S) print a, S[a]}'
+
+（这条语句是从 新浪互动社区事业部 新浪互动社区事业部技术总监王老大那儿获得的，非常不错）返回结果示例：
+　　LAST_ACK 5
+　　SYN_RECV 30
+　　ESTABLISHED 1597
+　　FIN_WAIT1 51
+　　FIN_WAIT2 504
+　　TIME_WAIT 1057
+　　其中的
+SYN_RECV表示正在等待处理的请求数；
+ESTABLISHED表示正常数据传输状态；
+TIME_WAIT表示处理完毕，等待超时结束的请求数。
+
+//mysql请求
+/usr/sbin/tcpdump -i eth0 -s 0 -l -w - dst port 3306 | strings | egrep -i 'SELECT|UPDATE|DELETE|INSERT|SET|COMMIT|ROLLBACK|CREATE|DROP|ALTER|CALL'
