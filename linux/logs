@@ -1,6 +1,6 @@
 netstat -n | awk '/^tcp/ {++S[$NF]} END {for(a in S) print a, S[a]}'
 
-（这条语句是从 新浪互动社区事业部 新浪互动社区事业部技术总监王老大那儿获得的，非常不错）返回结果示例：
+ 返回结果示例：
 　　LAST_ACK 5
 　　SYN_RECV 30
 　　ESTABLISHED 1597
