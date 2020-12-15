@@ -1,4 +1,4 @@
 
 
 微信在apple内置浏览器以及safari浏览器在内网地址或ip地址情况下
-好像会表现出无法使用cookie的情况
+好像会表现出无法使用cookie的情况 估计是samesite或其他cookie控制策略的问题
