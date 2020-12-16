@@ -4,7 +4,7 @@
  * User: slyvanas_mhb
  * Date: 2017-9-12
  * Time: 16:32
- * 切记开启sockets extension 11
+ * 切记开启sockets extension
  */
 $host = '127.0.0.1';
 $port = '4000';
