@@ -44,7 +44,7 @@ do { // never stop the daemon
     //一旦输出被返回到客户端,父/子socket都应通过socket_close($msgsock)函数来终止
     $last_error = socket_last_error($msgsock);
     $error_msg = socket_strerror($last_error);
-    var_dump($last_error,$error_msg);
-//    socket_close($msgsock);
+     printf("%s%s",$last_error,$error_msg);
+    socket_close($msgsock);
 } while (true);
 socket_close($sock);
