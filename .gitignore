@@ -1,5 +1,11 @@
 .idea
-composer.json
-composer.lock
+
 /vendor
-config.php
+*.inc.php
+vendor/
+
+
+composer.*
+.env
+
+*.jpg
