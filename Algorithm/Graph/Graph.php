@@ -131,11 +131,78 @@ class Graph
     }
 
      */
-    public function Floyd()
+    public function Floyd($AdjacenyMatrix)
     {
+        $n = count($AdjacenyMatrix);
+        $path = [];
+        printf("初始邻接矩阵\r\n<br>");
+        $this->printMatrix($AdjacenyMatrix);
+        $d = $AdjacenyMatrix;
+        for ($i = 1; $i <= $n; $i++) {
+            for ($j = 1; $j <= $n; $j++) {
+                $path[$i - 1][$j - 1] = $j;
+            }
+        }
+        printf("初始化path矩阵<br>");
+        $this->printMatrix($path);
+        for ($k = 1; $k <= $n; $k++) {//需要思考为什么k必须是最外层循环
+            for ($i = 1; $i <= $n; $i++) {
+                for ($j = 1; $j <= $n; $j++) {
+                    echo " k:$k, i:$i,j:$j; d [$i][$j]  compare with  d [$i][$k]  plus  d [$k][$j]  \r\n<br>";
+                    $this->printMatrix($AdjacenyMatrix);
+                    if ($d[$i - 1][$j - 1] > $d[$i - 1][$k - 1] + $d[$k - 1][$j - 1]) {
+                        echo "relaxation!:\r\n<br>";
+                        $path[$i - 1][$j - 1] = $k;
+                    } else {
+                        echo "no relaxation:\r\n<br>";
+                    }
+                    $this->printMatrix($path);
+                }
+            }
+        }
+
+        echo "结果:<br>";
+        $this->printMatrix($path);
 
     }
 
+    public function printMatrix($matrix)
+    {
+        $m = count($matrix);
+        $n = count($matrix[0]);
+        $new = [];
+        $temp = [" "];
+        for ($i = 1; $i <= $n; $i++) {
+            $temp[] = "v{$i}";;
+        }
+        $new[0] = $temp;
+
+
+        for ($i = 1; $i <= $m; $i++) {
+            $list = array_merge(["v{$i}"], $matrix[$i - 1]);
+            $new[] = $list;
+        }
+
+        echo '<table border=1 style="width:10px;">';
+        for ($i = 0; $i < count($new); $i++) {
+            echo '<tr>';
+            for ($j = 0; $j < count($new[$i]); $j++) {
+                echo '<td style="padding: 1px; " align="center">' . $new [$i][$j] . '</td>';
+            }
+            echo '<tr>';
+        }
+        echo '</table>';
+        return;
+
+    }
+
+    /*
+     * same as Floyd
+     */
+    public function FloydWarshall()
+    {
+
+    }
 
     //最小生成树一
     public function Prim()
@@ -195,3 +262,22 @@ class Graph
 
     }
 }
+
+$obj = new Graph();
+$adjacenyMatrix = [
+    [0, 2, 4, 99, 99],
+    [99, 0, 99, 1, 99],
+    [2, 3, 0, 5, 99],
+    [1, 5, 99, 0, 99],
+    [6, 99, 3, 99, 0]
+];
+
+$adjacenyMatrix = [
+    [0, 2, 4, 7],
+    [99, 0, 1, 99],
+    [2, 3, 0, 13],
+    [1, 2, 3, 0]
+];
+//$obj->printMatrix($adjacenyMatrix);
+//exit();
+$obj->Floyd($adjacenyMatrix);

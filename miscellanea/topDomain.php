@@ -27,6 +27,6 @@ echo getTopHost("https://mp.weixin.qq.com/s?__biz=MzA3ODI3ODUzMw=="),'<br>';
 echo getTopHost("http://cfi.net.cn/"),'<br>';
 echo getTopHost("http://www.cfi.NEt.cn/"),'<br>';
 echo getTopHost("https://www.sina.com.cn/?from=kandian"),'<br>';
-echo getTopHost("https://www.sdo.com/"),'<br>';
+echo getTopHost("https://llas.web.sdo.com/web1/index.html"),'<br>';
 echo getTopHost("https://login.sdo.com/sdo/iframe/?appId=791000478&areaId=1&returnURL=https%3A%2F%2Fact1.ff.sdo.com%2FLLAS%2FGhome%2Flogin%3FredirectUrl%3Dhttps%3A%2F%2Fllas.web.sdo.com%2Fweb1%2Findex.html"),'<br>';
 
