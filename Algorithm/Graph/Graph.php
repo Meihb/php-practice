@@ -152,6 +152,7 @@ class Graph
                     $this->printMatrix($AdjacenyMatrix);
                     if ($d[$i - 1][$j - 1] > $d[$i - 1][$k - 1] + $d[$k - 1][$j - 1]) {
                         echo "relaxation!:\r\n<br>";
+                        $d[$i - 1][$j - 1] = $d[$i - 1][$k - 1] + $d[$k - 1][$j - 1];
                         $path[$i - 1][$j - 1] = $k;
                     } else {
                         echo "no relaxation:\r\n<br>";
@@ -163,6 +164,7 @@ class Graph
 
         echo "结果:<br>";
         $this->printMatrix($path);
+        $this->printMatrix($d);
 
     }
 
@@ -235,8 +237,41 @@ class Graph
     }
      */
     /**
+     *如果数据表示为邻接表,那就需要遍历一次初始化入度(或者也不需要)
      * ACTIVITY ON VERTEX 每一个顶点带有意义的网络
      * 拓扑排序
+     *
+     * 拓扑序:如果从顶点v到顶点w有一条有一条有向路径,则v一定排在w之前。满足此条件的顶点序列成为拓扑序。获得拓扑序的过程即是拓扑排序
+     * AOV如果有合理的拓扑序,则必定是有向无环图(Directed Acyclic Graph,DAG),有环的话表示互为前置,无法实现。
+     *
+     *
+     * pesudocode:
+     * for (i=0;i<|V|;i++){
+     *  V=未输出的入度为0的顶点
+     *  if(不存在V){report cycle;break}//说明存在环
+     *  输出V
+     *  for(v的邻接点w){
+     *      indegree[w]--;
+     *  }
+     * }
+     * 思考:如果外循环i还未结束,但是为输出的入度为0的顶点已经找不到了,那说明:必定存在环(照理每次输出一个顶点,如果找不到了,那说明之前输出的有重复的顶点)
+     * 上面方法时间复杂度为O(|V|^2) ,外循环为|V|,每次还需要遍历顶点找到入度为0的顶点,顾得出
+     *
+     * 改良循环内查找方式
+     * for(v In V){
+     *      if Indegree(v)==0 ;Enqueue(v,Q)
+     * }
+     * while(!empty(Q)){
+     *      v = Dequeue(Q)//输出v
+     *      cnt++;
+     *     for(w in adj(v)){
+     *       ;
+     *        if( --indegree(w)==0) Enqueue(w,Q)
+     *   }
+     * if(cnt<|V|) report "cycle"
+     * }
+     * O(|V|+|E|)
+     * 此算法还可以来测试一个有向图是否为DAG
      */
     public function TopSort()
     {
@@ -247,6 +282,13 @@ class Graph
      * 关键路径 Activity On Edge网络 每一个边带有意义,顶点表示边结束
      * 绝对不允许厌恶的活动路径,即一下 机动时间为0的路径
      * 入度即表示前置条件,和aov其实一样的
+     *
+     * 首先进行拓扑排序,不能topsort的Graph无法求得关键路径 critical path
+     *
+     * 计算Earlist[v]的时候可以再topsort dequeue 时候 顺便执行 每次对比保留较大值
+     * 排序结束之后需要设置 汇点 的latest[v]=earlist[v],按照top序逆序遍历,每一个边尾节点未v的 设置 最晚执行时间,对比保留较小值
+     *
+     * 之后可以从源点出发,计算以其为边首节点的边,若边的机动时间为0,则是关键路径,确定好了两个顶点之后继续用尾节点为新的首节点(关键路径的sum等于Earlist[汇点]即最短工期)
      */
     /*
     1.工期
@@ -255,7 +297,9 @@ class Graph
     2.机动时间 可空闲的时间
     latest[last] = Earlist[last]
     Latest[i] = min{Latest[j]-C<i,j>|<i,j>∈E}
-    D<i,j> = Latest[j]-Earlist[i]-C<i,j>;//对于每一个边来说,用边尾节点的最晚时间 - 边首节点的最早时间 -边权重 即为 此条边的机动时间
+    D<i,j> = Latest[j]-Earlist[i]-C<i,j>;//对于每一个边来说,用边尾节点的最晚完成时间 - 边首节点的最早时间 -边权重 即为 此条边的机动时间 flexible time???
+    3.critical path 关键路径:绝对不允许延误所组成的路径 即机动时间为0
+
      */
     public function AOE()
     {
