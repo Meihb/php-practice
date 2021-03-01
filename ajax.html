@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+<a href='https://act1.ff.sdo.com/20200805LoveLive/api/login?redirectUrl=http://apitest.sdo.com:5500/ajax.html' >线上登录</a>
+<!--<a href='http://lovelive.com/api/login?redirectUrl=http://apitest.sdo.com:5500/ajax.html' >本地登录</a>-->
+<button class="btn">button</button>
+</body>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+<script type="">
+    $(document).ready(function(){
+        $.ajax({
+            //headers:{'Authorization':token},
+            type: "get",
+            dataType: "json",
+            xhrFields: {
+                withCredentials: true // 发送Ajax时，Request header中会带上 Cookie 信息。
+            },
+            //url: "https://act1.ff.sdo.com/20200805LoveLive/api/newsList?gameCode=ll&category=7534&pageIndex=0&pageSize=10",
+            // url:"http://lovelive.com/api/getUR/sign",
+            url:'https://act1.ff.sdo.com/20200805LoveLive/api/getUR/index',
+            success:function(result){
+                console.log(result)
+            },
+            error:function(result){
+                console.log(result)
+            }
+        })
+    });
+    // localStorage.setItem("token", 'eb002ebab7eca38792994da76aa5a68f1bce965042eca8458475c7675f88048d.92a08e454f5c1ea25f29678dc18bb415a260a70b754a39d0c2045c8847df0c95');
+    var token = localStorage.getItem("token");
+    $('.btn').click(function(){
+        $.ajax({
+            //headers:{'Authorization':token},
+            type: "get",
+            dataType: "json",
+            xhrFields: {
+                withCredentials: true // 发送Ajax时，Request header中会带上 Cookie 信息。
+            },
+            //url: "https://act1.ff.sdo.com/20200805LoveLive/api/newsList?gameCode=ll&category=7534&pageIndex=0&pageSize=10",
+            // url:"http://lovelive.com/api/getUR/sign",
+            url:'https://act1.ff.sdo.com/20200805LoveLive/api/getUR/getUserInfo',
+            success:function(result){
+                console.log(result)
+                if(result.code==10301) {
+                    location.href=result.data.backpageUrl;
+                } },
+
+            error:function(result){
+                console.log(result)
+            }
+        })
+    })
+    console.log(token)
+</script>
+
+</html>
